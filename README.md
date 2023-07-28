@@ -1,23 +1,50 @@
-#
+# Klipper Configuration for E3D toolchanger
 
-# Resonance Testing
+This configuration depends on following repositories:
 
-TEST_RESONANCES AXIS=X NAME=t0
-TEST_RESONANCES AXIS=Y NAME=t0
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_x_t0.csv -o /tmp/shaper_calibrate_t0_x.png
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_y_t0.csv -o /tmp/shaper_calibrate_t0_y.png
+1. [Klipper](https://github.com/alexjx/klipper)
+2. [Klipper Toolchanger Code](https://github.com/alexjx/Klipper_ToolChanger)
 
-TEST_RESONANCES AXIS=X NAME=t1
-TEST_RESONANCES AXIS=Y NAME=t1
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_x_t1.csv -o /tmp/shaper_calibrate_t1_x.png
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_y_t1.csv -o /tmp/shaper_calibrate_t1_y.png
+And KTCC is configured as a submodule of Klipper repo.
 
-TEST_RESONANCES AXIS=X NAME=t2
-TEST_RESONANCES AXIS=Y NAME=t2
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_x_t2.csv -o /tmp/shaper_calibrate_t2_x.png
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_y_t2.csv -o /tmp/shaper_calibrate_t2_y.png
+## Hardware Setup
 
-TEST_RESONANCES AXIS=X NAME=t3
-TEST_RESONANCES AXIS=Y NAME=t3
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_x_t3.csv -o /tmp/shaper_calibrate_t3_x.png
-~/klipper/scripts/calibrate_shaper.py /tmp/resonances_y_t3.csv -o /tmp/shaper_calibrate_t3_y.png
+Connection are the same as original toolchanger, except for tool alignment probe. Alignment probe need to connect to `e1stop`.
+
+## Installation
+
+1. Setup Klipper with MainsailOS
+1. Setup Klipper with modified repo
+
+    ```bash
+    cd ~
+    git remote add alexjx https://github.com/alexjx/klipper.git
+    git fetch alexjx
+    git checkout alexjx/master
+    git submodule update --init
+    ```
+
+1. Setup Klipper with this repo
+
+    ```bash
+    cd ~
+    git clone https://github.com/alexjx/klipper_config.git
+    cd klipper_config
+    bash install.sh
+    ```
+
+1. Restart klipper
+
+    ```bash
+    sudo systemctl restart klipper
+    ```
+
+1. Use following command to align tools. `PROBE_POINT` is configured with a default point, but should be changed to a point that is within the probe top.
+
+    ```
+    ALIGN_TOOLS [TOOLS=0,1,2,3] [PROBE_POINT=146,101]  
+    ```
+
+## Notes:
+
+1. This configuration is only work with toolchanger with physical XY endstop.
