@@ -19,3 +19,7 @@ TEST_RESONANCES AXIS=X NAME=t3
 TEST_RESONANCES AXIS=Y NAME=t3
 ~/klipper/scripts/calibrate_shaper.py /tmp/resonances_x_t3.csv -o /tmp/shaper_calibrate_t3_x.png
 ~/klipper/scripts/calibrate_shaper.py /tmp/resonances_y_t3.csv -o /tmp/shaper_calibrate_t3_y.png
+
+# Pressure Advance Testing Commands
+
+TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.020
