@@ -22,4 +22,14 @@ TEST_RESONANCES AXIS=Y NAME=t3
 
 # Pressure Advance Testing Commands
 
+## Bowden
 TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.020
+
+## Direct
+TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
+
+## Results
+
+| Filament | Bowden | Direct |
+| --- | --- | --- |
+| Pangzi Pink PLA | - | 0.032 |
