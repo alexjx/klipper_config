@@ -30,6 +30,7 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 
 ## Results
 
-| Filament | Bowden | Direct |
-| --- | --- | --- |
-| Pangzi Pink PLA | - | 0.0414 |
+| Filament         | Bowden | Direct |
+| ---------------- | ------ | ------ |
+| Pangzi Pink PLA  | -      | 0.0414 |
+| Kexcelled PET-CF | 0.5744 | -      |
