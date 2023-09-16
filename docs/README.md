@@ -35,3 +35,4 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 | Pangzi Pink PLA  | -      | 0.0414 |
 | Kexcelled PET-CF | 0.5744 | -      |
 | eSUN PLA Matte   | 0.4336 | -      |
+| eSUN PLA    | 0.4400 | -      |
