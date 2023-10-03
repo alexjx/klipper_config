@@ -38,13 +38,14 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 
 ## Results
 
-| Filament         | Bowden | Direct |
-| ---------------- | ------ | ------ |
-| Pangzi Pink PLA  | -      | 0.0414 |
-| Kexcelled PET-CF | 0.0000 | -      |
-| eSUN PLA Matte   | 0.4336 | -      |
-| eSUN PLA         | 0.4400 | -      |
-| eSUN eSilk       | 0.5900 | -      |
+| Filament         | Bowden | Direct | Description                 |
+| ---------------- | ------ | ------ | --------------------------- |
+| Pangzi Pink PLA  | -      | 0.0414 |                             |
+| Kexcelled PET-CF | 0.0000 | -      |                             |
+| eSUN PLA Matte   | 0.4336 | -      |                             |
+| eSUN PLA         | 0.6300 | -      |                             |
+| eSUN eSilk       | 0.7100 | -      | Temp. 210                   |
+| eSUN eSilk Color | 0.43   | -      | Temp. 210, all metal hotend |
 
 # Notes
 
