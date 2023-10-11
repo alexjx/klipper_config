@@ -20,6 +20,13 @@ TEST_RESONANCES AXIS=X NAME=t3
 TEST_RESONANCES AXIS=Y NAME=t3
 ~/klipper/scripts/calibrate_shaper.py /tmp/resonances_x_t3.csv -o /tmp/shaper_calibrate_t3_x.png
 ~/klipper/scripts/calibrate_shaper.py /tmp/resonances_y_t3.csv -o /tmp/shaper_calibrate_t3_y.png
+
+# batch processing
+for f in /tmp/resonances*.csv; do
+  ~/klipper/scripts/calibrate_shaper.py $f -o /tmp/shaper_calibrate_$(basename /tmp/resonances_x_t0_d.csv .csv | cut -b12-).png && \
+  rm -fv $f
+done
+
 ```
 
 # Pressure Advance Testing Commands
@@ -38,16 +45,16 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 
 ## Results
 
-| Filament         | Bowden | Direct | Description             |
-| ---------------- | ------ | ------ | ----------------------- |
-| Pangzi Pink PLA  | -      | 0.0414 |                         |
-| Kexcelled PET-CF | 0.0000 | -      |                         |
-| eSUN PLA Matte   | 0.4336 | -      |                         |
-| eSUN PLA         | 0.6300 | -      |                         |
-| eSUN eSilk       | 0.7100 | -      | Temp. 210               |
-| eSUN eSilk Color | 0.43   | -      | Temp. 210, metal hotend |
-| FusRock ABS-GF10 | 0.45   | -      | Temp. 270, metal hotend |
-| FusRock PA12-CF  | 0.0    | -      | Temp. 280, metal hotend |
+| Filament         | Bowden | Bowden (Metal) | Direct | Description             |
+| ---------------- | ------ | -------------- | ------ |
+| Pangzi Pink PLA  | -      |                | 0.0414 |                         |
+| Kexcelled PET-CF | 0.0000 |                | -      |                         |
+| eSUN PLA Matte   | 0.4336 |                | -      |                         |
+| eSUN PLA         | 0.6300 |                | -      |                         |
+| eSUN eSilk       | 0.7100 |                | -      | Temp. 210               |
+| eSUN eSilk Color |        | 0.43           | -      | Temp. 210, metal hotend |
+| FusRock ABS-GF10 |        | 0.45           | -      | Temp. 270, metal hotend |
+| FusRock PA12-CF  |        | 0.0            | -      | Temp. 280, metal hotend |
 
 # Notes
 
