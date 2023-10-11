@@ -45,19 +45,15 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 
 ## Results
 
-| Filament         | Bowden | Bowden (Metal) | Direct | Description             |
-| ---------------- | ------ | -------------- | ------ |
-| Pangzi Pink PLA  | -      |                | 0.0414 |                         |
-| Kexcelled PET-CF | 0.0000 |                | -      |                         |
-| eSUN PLA Matte   | 0.4336 |                | -      |                         |
-| eSUN PLA         | 0.6300 |                | -      |                         |
-| eSUN eSilk       | 0.7100 |                | -      | Temp. 210               |
-| eSUN eSilk Color |        | 0.43           | -      | Temp. 210, metal hotend |
-| FusRock ABS-GF10 |        | 0.45           | -      | Temp. 270, metal hotend |
-| FusRock PA12-CF  |        | 0.0            | -      | Temp. 280, metal hotend |
+| Filament         | Bowden | Bowden (Metal) | Direct | Temp. | Comments |
+| ---------------- | ------ | -------------- | ------ | ----- | -------- |
+| Pangzi Pink PLA  | -      |                | 0.0414 | 220   |          |
+| Kexcelled PET-CF | 0.0000 |                | -      | 300   |          |
+| eSUN PLA Matte   | 0.4336 |                | -      | 230   |          |
+| eSUN PLA         | 0.6300 |                | -      | 220   |          |
+| eSUN eSilk       | 0.7100 |                | -      | 210   |          |
+| eSUN eSilk Color |        | 0.21           | -      | 210   |          |
+| FusRock ABS-GF10 |        | 0.45           | -      | 270   |          |
+| FusRock PA12-CF  |        | 0.0            | -      | 280   |          |
 
 # Notes
-
-1. `duex.fan7` is broken
-2. `driver x` is broken
-3. `driver y` is broken
