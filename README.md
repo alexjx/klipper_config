@@ -43,18 +43,39 @@ This configuration depends on following repositories:
 
 ## Usage
 
+### Change tools
+
+```gcode
+T0 ; change to tool 0
+T1 ; change to tool 1
+T2 ; change to tool 2
+T3 ; change to tool 3
+```
+
+### Drop tool
+
+```gcode
+DROP_TOOL
+```
+
+### Reset coupling
+
+```gcode
+COUPLER_RESET
+```
+
 ### Aliangment
 
 Use following command to align tools. `PROBE_POINT` is configured with a default point, but should be changed to a point that is within the probe top. Every parameter is optional, it's given default value if not specified.
-However, if the default values are not correct, please edit `tools\alignment.cfg` to change the default values.
+However, if the default values are not correct, please edit `tools/alignment.cfg` to change the default values.
 
-```
+```gcode
 ALIGN_TOOLS [TOOLS=0,1,2,3] [PROBE_POINT=146,101]
 ```
 
 ### Begin gcode
 
-Begin is defined in `macros\startstop.cfg`. Its usage is following (with prusa slicer):
+Begin is defined in `macros/startstop.cfg`. Its usage is following (with prusa slicer):
 
 ```gcode
 PRINT_BEGIN INITIAL_TOOL={initial_tool} BED_TEMPS={first_layer_bed_temperature[0]},{first_layer_bed_temperature[1]},{first_layer_bed_temperature[2]},{first_layer_bed_temperature[3]} TOOL_TEMPS={first_layer_temperature[0]},{first_layer_temperature[1]},{first_layer_temperature[2]},{first_layer_temperature[3]} USED_TOOLS={is_extruder_used[0]},{is_extruder_used[1]},{is_extruder_used[2]},{is_extruder_used[3]} HEAT_SOAK=15
@@ -71,14 +92,9 @@ Where
 
 ### End gcode
 
-```
+```gcode
 PRINT_END
 ```
-
-## Notes:
-
-1. This configuration is only work with toolchanger with physical XY endstop.
-
 
 ## Hardware Setup
 
@@ -128,3 +144,8 @@ PRINT_END
 | Bed        |            | Use Z Endstop |
 | Alignment  | E0 Endstop |               |
 | Tool Mount | E1 Endstop |               |
+
+
+## Notes:
+
+1. This configuration is only work with toolchanger with physical XY endstop.
