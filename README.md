@@ -5,7 +5,80 @@ This configuration depends on following repositories:
 1. [Klipper](https://github.com/alexjx/klipper)
 2. [Klipper Toolchanger Code](https://github.com/alexjx/Klipper_ToolChanger)
 
-And KTCC is configured as a submodule of Klipper repo.
+## Installation
+
+1. Setup Klipper with MainsailOS
+1. Setup Klipper with modified repo
+
+    ```bash
+    cd ~/klipper
+    git remote add alexjx https://github.com/alexjx/klipper.git
+    git fetch alexjx
+    git checkout -f alexjx/master
+    ```
+
+1. Install Klipper ToolChanger Extension
+
+   ```bash
+   cd ~
+   git clone https://github.com/alexjx/Klipper_ToolChanger.git
+   cd ~/Klipper_ToolChanger
+   bash install.sh
+   ```
+
+1. Setup Klipper with this repo
+
+    ```bash
+    cd ~
+    git clone https://github.com/alexjx/klipper_config.git
+    cd klipper_config
+    bash install.sh
+    ```
+
+1. Restart klipper
+
+    ```bash
+    sudo systemctl restart klipper
+    ```
+
+## Usage
+
+### Aliangment
+
+Use following command to align tools. `PROBE_POINT` is configured with a default point, but should be changed to a point that is within the probe top. Every parameter is optional, it's given default value if not specified.
+However, if the default values are not correct, please edit `tools\alignment.cfg` to change the default values.
+
+```
+ALIGN_TOOLS [TOOLS=0,1,2,3] [PROBE_POINT=146,101]
+```
+
+### Begin gcode
+
+Begin is defined in `macros\startstop.cfg`. Its usage is following (with prusa slicer):
+
+```gcode
+PRINT_BEGIN INITIAL_TOOL={initial_tool} BED_TEMPS={first_layer_bed_temperature[0]},{first_layer_bed_temperature[1]},{first_layer_bed_temperature[2]},{first_layer_bed_temperature[3]} TOOL_TEMPS={first_layer_temperature[0]},{first_layer_temperature[1]},{first_layer_temperature[2]},{first_layer_temperature[3]} USED_TOOLS={is_extruder_used[0]},{is_extruder_used[1]},{is_extruder_used[2]},{is_extruder_used[3]} HEAT_SOAK=15
+```
+
+Where
+
+- `INITIAL_TOOL` is the first tool to be used in the print
+- `BED_TEMPS` is the bed temperature for each tool, it's a comma separated list.
+- `TOOL_TEMPS` is the tool temperature for each tool, it's a comma separated list.
+- `USED_TOOLS` is a list of boolean values, indicating if the tool is used in the print. Boolean value is either `true` or `false`.
+- `HEAT_SOAK` is the time to soak the chamber for high temperature print. It's activated only if bed temperature is above 110C.
+
+
+### End gcode
+
+```
+PRINT_END
+```
+
+## Notes:
+
+1. This configuration is only work with toolchanger with physical XY endstop.
+
 
 ## Hardware Setup
 
@@ -55,42 +128,3 @@ And KTCC is configured as a submodule of Klipper repo.
 | Bed        |            | Use Z Endstop |
 | Alignment  | E0 Endstop |               |
 | Tool Mount | E1 Endstop |               |
-
-
-## Installation
-
-1. Setup Klipper with MainsailOS
-1. Setup Klipper with modified repo
-
-    ```bash
-    cd ~
-    git remote add alexjx https://github.com/alexjx/klipper.git
-    git fetch alexjx
-    git checkout alexjx/master
-    git submodule update --init
-    ```
-
-1. Setup Klipper with this repo
-
-    ```bash
-    cd ~
-    git clone https://github.com/alexjx/klipper_config.git
-    cd klipper_config
-    bash install.sh
-    ```
-
-1. Restart klipper
-
-    ```bash
-    sudo systemctl restart klipper
-    ```
-
-1. Use following command to align tools. `PROBE_POINT` is configured with a default point, but should be changed to a point that is within the probe top.
-
-    ```
-    ALIGN_TOOLS [TOOLS=0,1,2,3] [PROBE_POINT=146,101]
-    ```
-
-## Notes:
-
-1. This configuration is only work with toolchanger with physical XY endstop.
