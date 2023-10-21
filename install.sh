@@ -17,7 +17,7 @@ INSTALL=(
 
 cd ~/printer_data/config
 for i in "${INSTALL[@]}"; do
-    if [ -d "$SCRIPT_DIR/$i" ]; then
+    if [ -e "$SCRIPT_DIR/$i" ]; then
         test -e $i || ln -sfv "$SCRIPT_DIR/$i" $i
     fi
 done
