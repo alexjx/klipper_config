@@ -41,6 +41,13 @@ This configuration depends on following repositories:
     sudo systemctl restart klipper
     ```
 
+## Configuration
+
+1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
+2. Update extruder and bed sensor type. Mines are `PT1000`
+3. Edit `~/klipper_config/printer_base.cfg`, change `bed`. I'm currently using AC mains bed.
+4. 
+
 ## Usage
 
 ### Change tools
