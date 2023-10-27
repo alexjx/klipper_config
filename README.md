@@ -5,6 +5,12 @@ This configuration depends on following repositories:
 1. [Klipper](https://github.com/alexjx/klipper)
 2. [Klipper Toolchanger Code](https://github.com/alexjx/Klipper_ToolChanger)
 
+## Credit
+
+1. Thanks orignal [Klipper](https://github.com/Klipper3d/klipper)
+2. Thanks orignal [KTCC](https://github.com/TypQxQ/Klipper_ToolChanger)
+3. Thanks [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) for adaptive mesh and purging
+
 ## Installation
 
 1. Setup Klipper with MainsailOS
