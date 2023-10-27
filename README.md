@@ -78,12 +78,16 @@ COUPLER_RESET
 
 ### Aliangment
 
-Use following command to align tools. `PROBE_POINT` is configured with a default point, but should be changed to a point that is within the probe top. Every parameter is optional, it's given default value if not specified.
+Use following command to align tools. Every parameter is optional, it's given default value if not specified.
 However, if the default values are not correct, please edit `tools/alignment.cfg` to change the default values.
 
 ```gcode
-ALIGN_TOOLS [TOOLS=0,1,2,3] [PROBE_POINT=146,101]
+ALIGN_TOOLS [TOOLS=0,1,2,3]
 ```
+
+Where
+
+- `TOOLS` is a list of tools to be aligned. It's a comma separated list. Default is all tools.
 
 ### Begin gcode
 
