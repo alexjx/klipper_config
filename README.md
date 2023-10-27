@@ -10,7 +10,7 @@ This configuration depends on following repositories:
 - Thanks orignal [Klipper](https://github.com/Klipper3d/klipper)
 - Thanks orignal [KTCC](https://github.com/TypQxQ/Klipper_ToolChanger)
 - Thanks [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) for adaptive mesh and purging
-- Thanks [KIAUH](https://github.com/dw-0/kiauh) for gcode shell command ([Arksine][https://github.com/Arksine])
+- Thanks [KIAUH](https://github.com/dw-0/kiauh) for gcode shell command ([Arksine](https://github.com/Arksine))
 
 ## Installation
 
@@ -57,8 +57,9 @@ This configuration depends on following repositories:
 ## Configuration
 
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
-2. Update extruder and bed sensor type. Mines are `PT1000`
-3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
+2. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
+3. Update other configurations to meet your needs.
+4. Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.
 
 ## Usage
 
