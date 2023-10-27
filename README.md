@@ -7,9 +7,10 @@ This configuration depends on following repositories:
 
 ## Credit
 
-1. Thanks orignal [Klipper](https://github.com/Klipper3d/klipper)
-2. Thanks orignal [KTCC](https://github.com/TypQxQ/Klipper_ToolChanger)
-3. Thanks [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) for adaptive mesh and purging
+- Thanks orignal [Klipper](https://github.com/Klipper3d/klipper)
+- Thanks orignal [KTCC](https://github.com/TypQxQ/Klipper_ToolChanger)
+- Thanks [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) for adaptive mesh and purging
+- Thanks [KIAUH](https://github.com/dw-0/kiauh) for gcode shell command ([Arksine][https://github.com/Arksine])
 
 ## Installation
 
@@ -32,7 +33,13 @@ This configuration depends on following repositories:
    bash install.sh
    ```
 
-1. Setup Klipper with this repo
+1. Install `gcode_shell_command`
+
+   ```bash
+   curl -o ~/klipper/klippy/extras/gcode_shell_command.py https://github.com/dw-0/kiauh/blob/master/resources/gcode_shell_command.py
+   ```
+
+2. Setup Klipper with this repo
 
     ```bash
     cd ~
@@ -41,7 +48,7 @@ This configuration depends on following repositories:
     bash install.sh
     ```
 
-1. Restart klipper
+3. Restart klipper
 
     ```bash
     sudo systemctl restart klipper
