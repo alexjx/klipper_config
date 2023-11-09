@@ -103,7 +103,7 @@ Where
 Begin is defined in `macros/startstop.cfg`. Its usage is following (with prusa slicer):
 
 ```gcode
-PRINT_BEGIN INITIAL_TOOL={initial_tool} BED_TEMPS={first_layer_bed_temperature[0]},{first_layer_bed_temperature[1]},{first_layer_bed_temperature[2]},{first_layer_bed_temperature[3]} TOOL_TEMPS={first_layer_temperature[0]},{first_layer_temperature[1]},{first_layer_temperature[2]},{first_layer_temperature[3]} USED_TOOLS={is_extruder_used[0]},{is_extruder_used[1]},{is_extruder_used[2]},{is_extruder_used[3]} HEAT_SOAK=15
+PRINT_BEGIN INITIAL_TOOL={initial_tool} BED_TEMPS={first_layer_bed_temperature[0]},{first_layer_bed_temperature[1]},{first_layer_bed_temperature[2]},{first_layer_bed_temperature[3]} TOOL_TEMPS={first_layer_temperature[0]},{first_layer_temperature[1]},{first_layer_temperature[2]},{first_layer_temperature[3]} TOOL_STANDBY_TEMPS={first_layer_temperature[0]-30},{first_layer_temperature[1]-30},{first_layer_temperature[2]-30},{first_layer_temperature[3]-30} USED_TOOLS={is_extruder_used[0]},{is_extruder_used[1]},{is_extruder_used[2]},{is_extruder_used[3]} HEAT_SOAK=20
 ```
 
 Where
@@ -111,6 +111,7 @@ Where
 - `INITIAL_TOOL` is the first tool to be used in the print
 - `BED_TEMPS` is the bed temperature for each tool, it's a comma separated list.
 - `TOOL_TEMPS` is the tool temperature for each tool, it's a comma separated list.
+- `TOOL_STANDBY_TEMPS` is the tool standby temperature for each tool, it's a comma separated list.
 - `USED_TOOLS` is a list of boolean values, indicating if the tool is used in the print. Boolean value is either `true` or `false`.
 - `HEAT_SOAK` is the time to soak the chamber for high temperature print. It's activated only if bed temperature is above 110C.
 
