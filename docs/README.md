@@ -32,7 +32,7 @@ done
 # Retraction Tunine
 
 ```
-TUNING_TOWER COMMAND=SET_RETRACTION PARAMETER=RETRACT_LENGTH START=0.5 STEP_DELTA=0.5 STEP_HEIGHT=5
+TUNING_TOWER COMMAND=SET_RETRACTION PARAMETER=RETRACT_LENGTH START=1.0 STEP_DELTA=0.5 STEP_HEIGHT=5
 ```
 
 # Pressure Advance Testing Commands
@@ -51,17 +51,18 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 
 ## Results
 
-| Filament          | Bowden | Bowden (Metal) | Direct | Retraction   | Temp. | Flow   | Comments     |
-| ----------------- | ------ | -------------- | ------ | ------------ | ----- | ------ | ------------ |
-| Pangzi Pink PLA   | -      |                | 0.0414 |              | 220   |        |              |
-| Kexcelled PET-CF  | 0.0000 |                | -      |              | 300   |        |              |
-| eSUN PLA Matte    | 0.4336 |                | -      |              | 230   |        |              |
-| eSUN PLA          | 0.6300 |                | -      |              | 220   |        |              |
-| eSUN eSilk        | 0.7100 |                | -      |              | 210   |        |              |
-| eSUN eSilk Color  | 0.7100 | 0.21           | -      |              | 210   |        |              |
-| FusRock ABS-GF10  |        | 0.45           | -      |              | 270   |        |              |
-| FusRock PA12-CF   |        | 0.0            | -      |              | 280   |        |              |
-| Tinmorry PETG-ECO | 1.26   |                | -      | 2.2 / 60 /60 | 230   |        |              |
-| eSUN PETG         | 0.86   |                | -      | 1.8 / 60 /60 | 240   | 0.9765 | Max flow 4.0 |
+| Filament          | Bowden    | Bowden (Metal) | Direct | Retraction   | Temp. | Flow   | Comments     |
+| ----------------- | --------- | -------------- | ------ | ------------ | ----- | ------ | ------------ |
+| Pangzi Pink PLA   | -         |                | 0.0414 |              | 220   |        |              |
+| Kexcelled PET-CF  | 0.0000    |                | -      |              | 300   |        |              |
+| eSUN PLA Matte    | 0.4336    |                | -      |              | 230   |        |              |
+| eSUN PLA          | 0.6300    |                | -      |              | 220   |        |              |
+| eSUN eSilk        | 0.7100    |                | -      |              | 210   |        |              |
+| eSUN eSilk Color  | 0.7100    | 0.21           | -      |              | 210   |        |              |
+| FusRock ABS-GF10  |           | 0.45           | -      |              | 270   |        |              |
+| FusRock PA12-CF   |           | 0.0            | -      |              | 280   |        |              |
+| Tinmorry PETG-ECO | 1.26      |                | -      | 2.2 / 60 /60 | 230   |        |              |
+| eSUN PETG         | 0.82@0.02 | 0.82@0.02      | -      | 1.8 / 60 /60 | 240   | 0.9765 | Max flow 4.0 |
+| ICEYUN PETG       | 1.06@0.03 |                |        | 1.8 / 60 /60 | 240   | 0.966  | Max flow 6.0 |
 
 # Notes
