@@ -31,4 +31,13 @@ cat > ~/printer_data/config/printer.cfg << _EOF
 [include printer_base.cfg]
 _EOF
 
+# patch scripts
+if [ -n $HOME ]; then
+    for f in $SCRIPT_DIR/scripts/*.sh; do
+        sed -i -e "s|/home/xinj|$HOME|g" $f
+    done
+else
+    echo "HOME is not set, please update scripts manually: $SCRIPT_DIR/scripts/*.sh"
+fi
+
 echo "Configurations installed."
