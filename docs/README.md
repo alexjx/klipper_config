@@ -70,6 +70,6 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 | FusRock PA12-CF   |            | 0.0            | -          |              |                  | 280   |        |              |
 | Tinmorry PETG-ECO | 1.26       |                | -          | 2.2 / 60 /60 |                  | 230   |        |              |
 | eSUN PETG         | 0.54@0.015 | 0.54@0.015     | 0.105@0.04 | 1.4 / 60 /60 | 0.3 / 60 / 60    | 240   | 0.9765 | Max flow 4.0 |
-| ICEYUN PETG       | 0.66@0.01  |                |            | 1.8 / 60 /60 |                  | 240   | 0.966  | Max flow 6.0 |
+| ICEYUN PETG       | 0.66@0.02  |                |            | 1.8 / 60 /60 |                  | 240   | 0.966  | Max flow 6.0 |
 
 # Notes

@@ -36,7 +36,7 @@ This configuration depends on following repositories:
 1. Install `gcode_shell_command`
 
    ```bash
-   curl -o ~/klipper/klippy/extras/gcode_shell_command.py https://github.com/dw-0/kiauh/blob/master/resources/gcode_shell_command.py
+   curl -o ~/klipper/klippy/extras/gcode_shell_command.py https://raw.githubusercontent.com/dw-0/kiauh/master/resources/gcode_shell_command.py
    ```
 
 2. Setup Klipper with this repo
