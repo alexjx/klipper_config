@@ -60,7 +60,8 @@ This configuration depends on following repositories:
 2. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
 3. Update other configurations to meet your needs.
 4. Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.
-5. Measure and update input shaper value for each tool
+5. Update `scripts\generate-belt-tension-graph.sh`, `scripts\generate-shaper-graph-x.sh`, `scripts\generate-shaper-graph-y.sh` to meet your paths.
+6. Measure and update input shaper value for each tool
 
 ## Usage
 
