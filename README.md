@@ -14,8 +14,8 @@ This configuration depends on following repositories:
 
 ## Installation
 
-1. Setup Klipper with MainsailOS
-1. Setup Klipper with modified repo
+1. Setup Raspberry PI with MainsailOS
+1. Install Klipper with modified repo (this only required for Duet2 WIFI), it may work with original Klipper, but not tested.
 
     ```bash
     cd ~/klipper
@@ -28,8 +28,8 @@ This configuration depends on following repositories:
 
    ```bash
    cd ~
-   git clone https://github.com/alexjx/Klipper_ToolChanger.git
-   cd ~/Klipper_ToolChanger
+   git clone https://github.com/alexjx/Klipper_ToolChanger.git ktcc
+   cd ~/ktcc
    bash install.sh
    ```
 
@@ -48,7 +48,7 @@ This configuration depends on following repositories:
     bash install.sh
     ```
 
-3. Restart klipper
+3. Restart klipper service
 
     ```bash
     sudo systemctl restart klipper
@@ -59,9 +59,13 @@ This configuration depends on following repositories:
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
 2. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
 3. Update other configurations to meet your needs.
+   1. I'm using E5 for stepper x, since my stepper x is not working.
+   2. I'm using PT1000 for extruder, you might have to change that.
+   3. The bed is an AC powered, you might have to change that by including different bed in `printer_base.cfg`
 4. Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.
 5. Update `scripts\generate-belt-tension-graph.sh`, `scripts\generate-shaper-graph-x.sh`, `scripts\generate-shaper-graph-y.sh` to meet your paths.
-6. Measure and update input shaper value for each tool
+6. Measure and update input shaper value for each tool.
+7. Update `~/klipper_config/tool/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
 
 ## Usage
 
