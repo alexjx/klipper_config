@@ -63,7 +63,7 @@ This configuration depends on following repositories:
    2. I'm using PT1000 for extruder, you might have to change that.
    3. The bed is an AC powered, you might have to change that by including different bed in `printer_base.cfg`
 4. Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.
-5. Update `scripts\generate-belt-tension-graph.sh`, `scripts\generate-shaper-graph-x.sh`, `scripts\generate-shaper-graph-y.sh` to meet your paths.
+5. Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.
 6. Measure and update input shaper value for each tool.
 7. Update `~/klipper_config/tool/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
 
