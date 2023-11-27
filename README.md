@@ -92,6 +92,8 @@ COUPLER_RESET
 
 ### Aliangment
 
+**Note: This is an extension to the original ToolChanger. We created an alignemnt tool to use 'switch' to probe offsets for each tool. It doesn't work with the original heated bed. Since there is no place to attach the alignment rod.**
+
 Use following command to align tools. Every parameter is optional, it's given default value if not specified.
 However, if the default values are not correct, please edit `tools/alignment.cfg` to change the default values.
 
