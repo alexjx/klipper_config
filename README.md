@@ -62,8 +62,21 @@ This configuration depends on following repositories:
    1. I'm using E5 for stepper x, since my stepper x is not working.
    2. I'm using PT1000 for extruder, you might have to change that.
    3. The bed is an AC powered, you might have to change that by including different bed in `printer_base.cfg`
-4. Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.
-5. Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.
+4. ~~Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.~~
+   Enable file processing for exclude object for adaptive probing and purging.
+
+   - Edit `moonraker.conf` to include object processing
+
+     ```
+     [file_manager]
+     enable_object_processing: True
+     ```
+
+   - Enable object lable in the slicer
+
+5. ~~Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.~~
+   Prefer https://github.com/Frix-x/klippain-shaketune
+
 6. Measure and update input shaper value for each tool.
 7. Update `~/klipper_config/tool/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
 
