@@ -71,7 +71,7 @@ TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.002
 | ICEYUN PETG       | 0.66@0.02 |                | 0.084@0.04  | 1.8 / 60 / 60 | 0.44 / 60 /60    | 240   | 0.966  | Max flow 6.0  |
 | Kexcelled PET-CF  | 0.0000    |                | -           |               |                  | 300   |        |               |
 | Pangzi Pink PLA   | -         |                | 0.0414@0.04 |               |                  | 220   |        |               |
-| Tinmorry PETG-ECO | 1.26      |                | -           | 2.2 / 60 / 60 |                  | 230   |        |               |
+| Tinmorry PETG-ECO | 0.78      |                | -           | 2.2 / 60 / 60 |                  | 240   |        |               |
 | Yousu PC          |           | 0.44@0.04      |             | 1.6 / 60 / 60 |                  | 300   | 0.97   | Max flow 10.0 |
 
 # Notes
