@@ -20,6 +20,7 @@ TUNING_TOWER COMMAND=SET_RETRACTION PARAMETER=RETRACT_LENGTH START=0.1 STEP_DELT
 | eSUN PLA Matte    |           |                | 0.03@0.04   |               |                  | 220   |        |               |
 | eSUN TPE          |           |                | 0.065@0.04  |               | 2.3 / 60 / 60    | 230   |        | Max flow 4.0  |
 | eSUN TPU-95A      |           |                | 0.105@0.04  |               | 2 / 50 / 50      | 230   |        | Max flow 4.0  |
+| eSUN ePA          |           | 0.15@0.04i     |             | 4.5 / 60 / 60 |                  | 260   |        |               |
 | FusRock ABS-GF10  |           | 0.45           | -           |               |                  | 270   |        |               |
 | FusRock PA12-CF   |           | 0.0            | -           |               |                  | 280   |        |               |
 | ICEYUN PETG       | 0.66@0.02 |                | 0.084@0.04  | 1.8 / 60 / 60 | 0.44 / 60 /60    | 240   | 0.966  | Max flow 6.0  |
