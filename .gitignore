@@ -1,0 +1,30 @@
+# Temporary agent plans, research, and build artifacts
+.agents/
+.claude/
+
+# Klipper runtime output and generated backups
+*.log
+*.log.*
+*.gcode
+printer-*.cfg
+*.cfg.bak
+*.cfg.tmp
+
+# Python tooling caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Editor and operating-system files
+.idea/
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
