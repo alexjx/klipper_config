@@ -142,6 +142,38 @@ Where
 PRINT_END
 ```
 
+### Heated-bed filament dryer
+
+Start a timed dryer cycle with the bed temperature and duration in hours. The
+timer starts after the bed is within 2C of the target temperature. Defaults are
+110C and 12 hours; accepted limits are 40-120C and 1-12 hours.
+
+```gcode
+DRY_FILAMENT TEMP=110 HOURS=12
+```
+
+Cancel the cycle and turn off the bed with:
+
+```gcode
+CANCEL_FILAMENT_DRYER
+```
+
+Starting a print cancels an active dryer cycle. Before heating, the dryer requires
+that no tool is mounted, turns off all heaters, homes every axis, moves the bed to
+absolute Z=200mm (about 20cm below its home position), waits for motion to finish,
+and releases all motors. It then enables only the bed. A changed bed target,
+including an external `TURN_OFF_HEATERS`, stops the dryer timer instead of later
+overwriting that target. The configured idle timeout is not changed; like
+`HEAT_SOAK`, the dryer issues a 1ms dwell every 30 seconds to register activity.
+
+> [!WARNING]
+> Only use this mode if the bed, heater wiring, SSR, build surface, spool, and
+> drying container are rated for continuous operation at the selected
+> temperature. Keep the container vented, provide a path for moist air to escape,
+> and do not treat bed temperature as proof of filament temperature. Verify the
+> first cycle while attended with independent temperature and fire protection.
+> Release the Z motor only if the bed cannot fall under gravity at Z=200mm.
+
 ## Hardware Setup
 
 ### Motors
