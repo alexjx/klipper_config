@@ -118,6 +118,47 @@ Where
 
 - `TOOLS` is a list of tools to be aligned. It's a comma separated list. Default is all tools.
 
+### Manual bed calibration
+
+The original `MANUAL_BED_CALIBRATE` command remains available. It performs its
+existing homing sequence and creates a 3x3 bed mesh over the configured mesh
+bounds:
+
+```gcode
+MANUAL_BED_CALIBRATE
+```
+
+The touchscreen's guided corner adjustment is a separate workflow. It automatically
+scans all four fixed bed adjustment points; the operator does not select a point
+or replace the original public calibration macro.
+
+The screen uses the internal `_MANUAL_BED_PROBE_POINT` helper once per point:
+
+```gcode
+_MANUAL_BED_PROBE_POINT POINT=FL
+_MANUAL_BED_PROBE_POINT POINT=FR
+_MANUAL_BED_PROBE_POINT POINT=BR
+_MANUAL_BED_PROBE_POINT POINT=BL
+```
+
+These commands are documented for diagnostics only. Normal operation is a
+single `Scan Bed Corners` action on the touchscreen.
+
+The point names are front-left, front-right, back-right, and back-left. Each
+helper call requires no mounted tool, verifies that the tool mount is empty, homes
+the printer if necessary, clears active bed mesh compensation, moves to the
+configured point, probes it, and lifts Z before returning.
+
+The default XY values in `macros/G29.cfg` are the existing safe bed-mesh corner
+coordinates. Measure the actual bed screw locations and update `point_fl`,
+`point_fr`, `point_br`, and `point_bl` so the probe is directly above each screw,
+or at the closest safe point that represents it. Do not use a coordinate the
+probe cannot safely reach.
+
+After each helper call, the touchscreen queries the Klipper `probe` object for
+`last_probe_position` and `last_z_result`. The four relative deviations and
+their range are calculated by the client; this helper does not create a mesh.
+
 ### Begin gcode
 
 Begin is defined in `macros/startstop.cfg`. Its usage is following (with prusa slicer):
