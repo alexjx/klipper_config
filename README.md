@@ -120,7 +120,8 @@ Where
 
 ### Manual bed calibration
 
-The original `MANUAL_BED_CALIBRATE` command remains available. It performs its
+The original `MANUAL_BED_CALIBRATE` command remains available. If a tool is
+mounted, it drops the tool first, verifies the mount is empty, then performs its
 existing homing sequence and creates a 3x3 bed mesh over the configured mesh
 bounds:
 
@@ -145,9 +146,9 @@ These commands are documented for diagnostics only. Normal operation is a
 single `Scan Bed Corners` action on the touchscreen.
 
 The point names are front-left, front-right, back-right, and back-left. Each
-helper call requires no mounted tool, verifies that the tool mount is empty, homes
-the printer if necessary, clears active bed mesh compensation, moves to the
-configured point, probes it, and lifts Z before returning.
+helper call drops a mounted tool, verifies that the tool mount is empty, homes the
+printer if necessary, clears active bed mesh compensation, moves to the configured
+point, probes it, and lifts Z before returning.
 
 The default XY values in `macros/G29.cfg` are the existing safe bed-mesh corner
 coordinates. Measure the actual bed screw locations and update `point_fl`,
