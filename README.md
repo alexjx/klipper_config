@@ -57,12 +57,15 @@ This configuration depends on following repositories:
 ## Configuration
 
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
-2. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
-3. Update other configurations to meet your needs.
+2. Replace the five placeholder CAN UUIDs in `toolboards/mcu.cfg`. See the
+   [CAN toolboard configuration](docs/can-toolboards.md) for board mapping and
+   first-start checks.
+3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
+4. Update other configurations to meet your needs.
    1. I'm using E5 for stepper x, since my stepper x is not working.
    2. I'm using PT1000 for extruder, you might have to change that.
    3. The bed is an AC powered, you might have to change that by including different bed in `printer_base.cfg`
-4. ~~Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.~~
+5. ~~Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.~~
    Enable file processing for exclude object for adaptive probing and purging.
 
    - Edit `moonraker.conf` to include object processing
@@ -74,13 +77,137 @@ This configuration depends on following repositories:
 
    - Enable object lable in the slicer
 
-5. ~~Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.~~
+6. ~~Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.~~
    Prefer https://github.com/Frix-x/klippain-shaketune
 
-6. Measure and update input shaper value for each tool.
-7. Update `~/klipper_config/tool/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
+7. Measure and update input shaper value for each tool.
+8. Update `~/klipper_config/tools/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
+
+## CAN Toolboard Configuration
+
+The local connector and MCU-pin reference is
+[`toolboards/pins.md`](toolboards/pins.md).
+
+The active profile uses one USB-CAN bridge and four identical Toolhead v3 CAN
+boards. The Duet2/DueX continues to control the printer axes, bed, tool coupler,
+endstops, and controller fan. Each toolboard controls one complete tool:
+
+- one Orbiter 2.0 extruder motor;
+- one 24 V hotend heater and one PT1000 temperature sensor;
+- one automatic 24 V hotend-cooling fan; and
+- two synchronized 24 V part-cooling fans.
+
+`printer_base.cfg` loads the complete CAN configuration through one include:
+
+```ini
+[include toolboards/toolboards.cfg]
+```
+
+That file loads `mcu.cfg` followed by `tool0.cfg` through `tool3.cfg`. The
+legacy Duet toolhead configuration files have been removed, so these four
+toolboard files are the only definitions for the extruders, hotend heaters,
+temperature sensors, and tool fans.
+
+### CAN MCU names and UUIDs
+
+The repository contains valid-format placeholder UUIDs so the configuration can
+be parsed before the boards are connected. They do not identify real hardware.
+Replace every value in `toolboards/mcu.cfg` before starting Klipper on the
+printer.
+
+| Configuration section | Placeholder UUID | Physical board | Tool config |
+| --- | --- | --- | --- |
+| `mcu usb_bridge` | `000000000001` | USB-CAN Bridge v2 | — |
+| `mcu tool0` | `000000000002` | T0 Toolhead v3 | `toolboards/tool0.cfg` |
+| `mcu tool1` | `000000000003` | T1 Toolhead v3 | `toolboards/tool1.cfg` |
+| `mcu tool2` | `000000000004` | T2 Toolhead v3 | `toolboards/tool2.cfg` |
+| `mcu tool3` | `000000000005` | T3 Toolhead v3 | `toolboards/tool3.cfg` |
+
+All five MCUs use `canbus_interface: can0`. Discover and record one unassigned
+toolboard at a time so its physical tool number cannot be confused with another
+board. The host CAN interface must be configured for 1 Mbit/s.
+
+### Per-tool Klipper names
+
+KTCC and the existing macros depend on these names. Do not rename them when
+installing the real UUIDs.
+
+| Tool | MCU prefix | Extruder/heater | Driver | Hotend fan | Part-fan object |
+| --- | --- | --- | --- | --- | --- |
+| T0 | `tool0:` | `extruder` | `tmc2209 extruder` | `hotend_fan_0` | `part_fan_0` |
+| T1 | `tool1:` | `extruder1` | `tmc2209 extruder1` | `hotend_fan_1` | `part_fan_1` |
+| T2 | `tool2:` | `extruder2` | `tmc2209 extruder2` | `hotend_fan_2` | `part_fan_2` |
+| T3 | `tool3:` | `extruder3` | `tmc2209 extruder3` | `hotend_fan_3` | `part_fan_3` |
+
+### Shared Toolhead v3 pin map
+
+Each file uses the same local pin names with its own MCU prefix. For example,
+T2 uses `tool2:PA8` for its heater.
+
+| Function | Toolboard pin | Klipper behavior |
+| --- | --- | --- |
+| Extruder step | `PD0` | TMC2209 step input |
+| Extruder direction | `!PD1` | Direction signal is inverted |
+| Extruder enable | `!PD2` | Enable signal is active-low |
+| TMC2209 UART | `PA15` | Driver communication and diagnostics |
+| Hotend heater | `PA8` | PWM heater output, `max_power: 1.0` |
+| PT1000 sensor | `PA0` | Uses `pullup_resistor: 2200` |
+| Hotend fan | `PA6` | Automatic at 40°C, full speed |
+| Part-cooling fan A | `PA7` | Combined into one logical fan |
+| Part-cooling fan B | `PB0` | Combined into the same logical fan |
+
+The two physical part-cooling outputs are joined with a Klipper `multi_pin`.
+Commands sent to `part_fan_0` through `part_fan_3` therefore drive both fans on
+the selected tool at the same speed.
+
+### Shared Orbiter and hotend defaults
+
+All four tool configurations currently use the following starting values:
+
+| Setting | Value |
+| --- | --- |
+| Microsteps | `16` |
+| Full steps per rotation | `200` |
+| Orbiter rotation distance | `4.637` |
+| TMC2209 run current | `0.72 A` |
+| TMC2209 sense resistor | `0.110 ohm` |
+| Nozzle / filament diameter | `0.4 mm` / `1.75 mm` |
+| Maximum single extrusion-only move | `250 mm` |
+| Maximum extrusion-only velocity | `100 mm/s` |
+| Minimum extrusion temperature | `170°C` |
+| Temperature range | `-10°C` to `320°C` |
+| Temperature sensor | `PT1000`, 2.2 kOhm pull-up |
+
+The checked-in PID values are only starting values copied from the previous
+heater configuration. PID, rotation distance, motor direction, pressure
+advance, and retraction must be checked or calibrated for each physical tool.
+Use the attended first-start procedure in
+[docs/can-toolboards.md](docs/can-toolboards.md) before normal printing.
 
 ## Usage
+
+### Direct-drive filament macros
+
+All four tools use the same Orbiter 2.0 direct-drive defaults. `TOOL` is a
+number from 0 through 3; when omitted, the currently mounted tool is used.
+
+```gcode
+LOAD_FILAMENT TOOL=0 TEMP=220
+UNLOAD_FILAMENT TOOL=0 TEMP=220
+COLD_PULL TOOL=0 INITIAL_TEMP=220
+```
+
+`LOAD_FILAMENT` defaults to an 80 mm feed at a conservative 5 mm/s followed by
+a 50 mm slow purge. `UNLOAD_FILAMENT` defaults to a 200 mm withdrawal at
+20 mm/s; `COLD_PULL` uses 10 mm/s. Override these for a different spool path
+with `LENGTH`, `SPEED`, `PURGE_LENGTH`, or `PURGE_SPEED` as applicable. A
+single move is limited to 250 mm to match the extruder safety limit. The
+printer must be attended while establishing safe lengths for its final routing.
+
+T0 and T1 pressure advance were reset because changing their extruder hardware
+invalidates the previous values. Calibrate pressure advance and retraction for
+each tool before production printing; the existing T2 and T3 values are kept as
+starting points because those tools already used Orbiter direct drive.
 
 ### Change tools
 
@@ -225,34 +352,23 @@ overwriting that target. The configured idle timeout is not changed; like
 | Motor A  | Driver X  | left motor from front  |
 | Motor B  | Driver Y  | right motor from front |
 | Motor Z  | Driver Z  |                        |
-| Motor E0 | Driver E0 |                        |
-| Motor E1 | Driver E1 |                        |
-| Motor E2 | Driver E2 |                        |
-| Motor E3 | Driver E3 |                        |
+| Orbiter T0 | Toolboard T0 TMC2209 |             |
+| Orbiter T1 | Toolboard T1 TMC2209 |             |
+| Orbiter T2 | Toolboard T2 TMC2209 |             |
+| Orbiter T3 | Toolboard T3 TMC2209 |             |
 | Coupler  | Driver E4 |                        |
 
-### Heated Bed and Extruders
+### Heated Bed and CAN Toolboards
 
 | Item              | Connector          | Description |
 | ----------------- | ------------------ | ----------- |
 | Bed               | Bed Heater         |             |
 | Bed Sensor        | Bed Sensor         |             |
-| Extruder 0 Heater | E0 Heater          |             |
-| Extruder 0 Sendor | E0 Sensor          |             |
-| Extruder 1 Heater | E1 Heater          |             |
-| Extruder 1 Senor  | E1 Sensor          |             |
-| Extruder 2 Heater | E2 Heater          |             |
-| Extruder 2 Sensor | E2 Sensor          |             |
-| Extruder 3 Heater | E3 Heater          |             |
-| Extruder 3 Sensor | E3 Sensor          |             |
-| Hotend 0 Fan      | FAN_1              |             |
-| Hotend 1 Fan      | sx1509_duex:PIN_12 | Duex FAN3   |
-| Hotend 2 Fan      | sx1509_duex:PIN_6  | Duex FAN5   |
-| Hotend 3 Fan      | sx1509_duex:PIN_4  | Duex FAN7   |
-| Part Cooling 0    | FAN_2              |             |
-| Part Cooling 1    | sx1509_duex:PIN_7  | Duex FAN4   |
-| Part Cooling 2    | sx1509_duex:PIN_5  | Duex FAN6   |
-| Part Cooling 0    | sx1509_duex:PIN_15 | Duex FAN8   |
+| T0-T3 heater      | Toolboard `PA8`     | One per tool |
+| T0-T3 PT1000      | Toolboard `PA0`     | One per tool |
+| T0-T3 Orbiter 2.0 | Toolboard TMC2209   | One per tool |
+| T0-T3 hotend fan  | Toolboard `PA6`     | One per tool |
+| T0-T3 part fans   | Toolboard `PA7/PB0` | Two synchronized fans per tool |
 
 ### Endstops
 

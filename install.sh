@@ -11,6 +11,7 @@ INSTALL=(
     duet2
     macros
     settings
+    toolboards
     tools
     printer_base.cfg
 )

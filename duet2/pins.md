@@ -1,3 +1,10 @@
+# Duet2/DueX pin reference
+
+This is a hardware reference, not an active toolhead configuration. T0-T3
+extruders, heaters, temperature sensors, and fans are configured only in
+`toolboards/`. The Duet2/DueX pins retained by the active printer are used for
+motion, the coupler, bed, tool/alignment sensors, controller fan, and LED.
+
 # Drivers
 
 Here are the pins for the 10 stepper drivers supported by a Duet2 board
