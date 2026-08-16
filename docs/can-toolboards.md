@@ -8,7 +8,8 @@ the CAN toolboards.
 
 ## Before starting Klipper
 
-Replace all five placeholder values in `toolboards/mcu.cfg`:
+The USB-CAN bridge UUID is `28f4296c4844`. Replace the four remaining
+toolboard placeholder values in `toolboards/mcu.cfg`:
 
 ```bash
 rg 'PLACEHOLDER' toolboards/mcu.cfg

@@ -57,9 +57,9 @@ This configuration depends on following repositories:
 ## Configuration
 
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
-2. Replace the five placeholder CAN UUIDs in `toolboards/mcu.cfg`. See the
-   [CAN toolboard configuration](docs/can-toolboards.md) for board mapping and
-   first-start checks.
+2. Replace the four toolboard placeholder CAN UUIDs in `toolboards/mcu.cfg`.
+   See the [CAN toolboard configuration](docs/can-toolboards.md) for board
+   mapping and first-start checks.
 3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
 4. Update other configurations to meet your needs.
    1. I'm using PT1000 for extruder, you might have to change that.
@@ -110,14 +110,14 @@ temperature sensors, and tool fans.
 
 ### CAN MCU names and UUIDs
 
-The repository contains valid-format placeholder UUIDs so the configuration can
-be parsed before the boards are connected. They do not identify real hardware.
-Replace every value in `toolboards/mcu.cfg` before starting Klipper on the
-printer.
+The USB-CAN bridge UUID is recorded below. The toolboards use valid-format
+placeholder UUIDs so the configuration can be parsed before they are connected;
+those placeholders do not identify real hardware. Replace all four toolboard
+values in `toolboards/mcu.cfg` before starting Klipper on the printer.
 
-| Configuration section | Placeholder UUID | Physical board | Tool config |
+| Configuration section | CAN UUID | Physical board | Tool config |
 | --- | --- | --- | --- |
-| `mcu usb_bridge` | `000000000001` | USB-CAN Bridge v2 | — |
+| `mcu usb_bridge` | `28f4296c4844` | USB-CAN Bridge v2 | — |
 | `mcu tool0` | `000000000002` | T0 Toolhead v3 | `toolboards/tool0.cfg` |
 | `mcu tool1` | `000000000003` | T1 Toolhead v3 | `toolboards/tool1.cfg` |
 | `mcu tool2` | `000000000004` | T2 Toolhead v3 | `toolboards/tool2.cfg` |
