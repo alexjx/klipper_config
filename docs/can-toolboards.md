@@ -1,9 +1,10 @@
 # CAN toolboard configuration
 
 The active printer profile uses one USB-CAN bridge and four Toolhead v3 boards.
-The Duet2/DueX remains responsible for motion, the bed, the coupler, tool
-detection and its controller fan. Extruders, hotend heaters, hotend fans and
-part-cooling fans are assigned to the CAN toolboards.
+The Duet2 remains responsible for motion, the bed, the coupler, and tool
+detection. The DueX E5/E6 outputs drive the controller fan and case LED.
+Extruders, hotend heaters, hotend fans, and part-cooling fans are assigned to
+the CAN toolboards.
 
 ## Before starting Klipper
 

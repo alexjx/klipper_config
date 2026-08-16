@@ -62,9 +62,8 @@ This configuration depends on following repositories:
    first-start checks.
 3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
 4. Update other configurations to meet your needs.
-   1. I'm using E5 for stepper x, since my stepper x is not working.
-   2. I'm using PT1000 for extruder, you might have to change that.
-   3. The bed is an AC powered, you might have to change that by including different bed in `printer_base.cfg`
+   1. I'm using PT1000 for extruder, you might have to change that.
+   2. The bed is AC powered, so include a different bed configuration in `printer_base.cfg` if needed.
 5. ~~Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.~~
    Enable file processing for exclude object for adaptive probing and purging.
 
@@ -89,8 +88,9 @@ The local connector and MCU-pin reference is
 [`toolboards/pins.md`](toolboards/pins.md).
 
 The active profile uses one USB-CAN bridge and four identical Toolhead v3 CAN
-boards. The Duet2/DueX continues to control the printer axes, bed, tool coupler,
-endstops, and controller fan. Each toolboard controls one complete tool:
+boards. The Duet2 controls the printer axes, bed, tool coupler, and endstops;
+the DueX E5/E6 outputs drive the controller fan and case LED. Each toolboard
+controls one complete tool:
 
 - one Orbiter 2.0 extruder motor;
 - one 24 V hotend heater and one PT1000 temperature sensor;
@@ -345,41 +345,52 @@ overwriting that target. The configured idle timeout is not changed; like
 
 ## Hardware Setup
 
-### Motors
+The connector name is the label on the board. MCU pins are included for
+configuration review and troubleshooting; connect loads to the named connector,
+not directly to an MCU pin. A leading `!` means Klipper inverts that signal.
 
-| Item     | Connector | Description            |
-| -------- | --------- | ---------------------- |
-| Motor A  | Driver X  | left motor from front  |
-| Motor B  | Driver Y  | right motor from front |
-| Motor Z  | Driver Z  |                        |
-| Orbiter T0 | Toolboard T0 TMC2209 |             |
-| Orbiter T1 | Toolboard T1 TMC2209 |             |
-| Orbiter T2 | Toolboard T2 TMC2209 |             |
-| Orbiter T3 | Toolboard T3 TMC2209 |             |
-| Coupler  | Driver E4 |                        |
+### Duet 2 WiFi v1.03 connection map
 
-### Heated Bed and CAN Toolboards
+| Function | Physical connector | MCU pin map | Klipper object / notes |
+| --- | --- | --- | --- |
+| CoreXY motor A | `X MOTOR` | step `PD6`, dir `!PD11`, CS `PD14` | `stepper_x`; left motor when viewed from the front |
+| CoreXY motor B | `Y MOTOR` | step `PD7`, dir `!PD12`, CS `PC9` | `stepper_y`; right motor when viewed from the front |
+| Z motor | `Z MOTOR` | step `PD8`, dir `!PD13`, CS `PC10` | `stepper_z`; fit the ZB jumpers if only ZA is used |
+| Tool coupler motor | `E0 MOTOR` | step `PD5`, dir `!PA1`, CS `PC17` | `manual_stepper stepper_c` |
+| Shared motor enable | Internal | `!PC6` | Active-low enable for the four onboard TMC2660 drivers above |
+| X endstop | `X_STOP` | `PC14` | Physical X homing switch |
+| Y endstop | `Y_STOP` | `PA2` | Physical Y homing switch |
+| Bed/Z probe | `Z_STOP` | `PD29` | Probe input used as `probe:z_virtual_endstop` for Z homing |
+| Tool alignment switch | `E0_STOP` | `^!PD10` | Pull-up and inverted input used by `[alignment]` |
+| Tool-mounted switch | `E1_STOP` | `PC16` | Coupler endstop used by `manual_stepper stepper_c` |
+| AC-bed SSR control | `BED HEATER` | `!PA19` | `heater_bed`; the output polarity is inverted |
+| Bed temperature sensor | `BED TEMP` | `PC13` | Bed thermistor input |
+| Controller fan | DueX `E5 HEAT` output | `!PC11` | `controller_fan drivers_fan` |
+| Case LED | DueX `E6 HEAT` output | `!PA15` | PWM `output_pin LED` |
 
-| Item              | Connector          | Description |
-| ----------------- | ------------------ | ----------- |
-| Bed               | Bed Heater         |             |
-| Bed Sensor        | Bed Sensor         |             |
-| T0-T3 heater      | Toolboard `PA8`     | One per tool |
-| T0-T3 PT1000      | Toolboard `PA0`     | One per tool |
-| T0-T3 Orbiter 2.0 | Toolboard TMC2209   | One per tool |
-| T0-T3 hotend fan  | Toolboard `PA6`     | One per tool |
-| T0-T3 part fans   | Toolboard `PA7/PB0` | Two synchronized fans per tool |
+The replacement controller is selected by this USB identity:
 
-### Endstops
+```ini
+[mcu]
+serial: /dev/serial/by-id/usb-Klipper_sam4e8e_00313753364B37373032303531303233-if00
+```
 
-| Item       | Connector  | Description   |
-| ---------- | ---------- | ------------- |
-| X          | X Endstop  |               |
-| Y          | Y Endstop  |               |
-| Z          | Z Endstop  |               |
-| Bed        |            | Use Z Endstop |
-| Alignment  | E0 Endstop |               |
-| Tool Mount | E1 Endstop |               |
+### Per-tool CAN connection map
+
+The following row set applies independently to T0, T1, T2, and T3.
+
+| Function | Toolhead v3 connector | Local pin map | Klipper behavior |
+| --- | --- | --- | --- |
+| 24 V power and CAN | `J2` XT30 2+2 | 24 V, GND, CANH, CANL | One CAN connection per toolboard |
+| Orbiter 2.0 motor | `J4` | step `PD0`, dir `!PD1`, enable `!PD2`, UART `PA15` | Per-tool TMC2209 extruder driver |
+| Hotend heater | `J5` | `PA8` | 24 V low-side heater output |
+| Hotend-cooling fan | `J6` / Fan 0 | `PA6` | Starts automatically at 40°C or while heating |
+| Part-cooling fan 1 | `J7` / Fan 1 | `PA7` | First member of the per-tool synchronized fan pair |
+| Part-cooling fan 2 | `J8` / Fan 2 | `PB0` | Second member of the per-tool synchronized fan pair |
+| PT1000 sensor | `J9` | `PA0` | Two-wire input with a configured 2.2 kOhm pull-up |
+
+See [`duet2/pins.md`](duet2/pins.md) and
+[`toolboards/pins.md`](toolboards/pins.md) for the full hardware references.
 
 
 ## Notes:

@@ -2,8 +2,9 @@
 
 This is a hardware reference, not an active toolhead configuration. T0-T3
 extruders, heaters, temperature sensors, and fans are configured only in
-`toolboards/`. The Duet2/DueX pins retained by the active printer are used for
-motion, the coupler, bed, tool/alignment sensors, controller fan, and LED.
+`toolboards/`. The active printer uses the Duet's onboard X/Y/Z drivers for
+motion, its E0 driver for the coupler, and its remaining pins for the bed,
+tool/alignment sensors, controller fan, and LED.
 
 # Drivers
 
