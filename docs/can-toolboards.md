@@ -6,24 +6,19 @@ detection. The DueX E5/E6 outputs drive the controller fan and case LED.
 Extruders, hotend heaters, hotend fans, and part-cooling fans are assigned to
 the CAN toolboards.
 
-## Before starting Klipper
+## Installed CAN UUIDs
 
-The USB-CAN bridge UUID is `28f4296c4844`. Replace the four remaining
-toolboard placeholder values in `toolboards/mcu.cfg`:
+The USB-CAN bridge UUID is `28f4296c4844`. The toolboards are installed in
+physical ID order, with Toolboard 01 assigned to T0 through Toolboard 04
+assigned to T3:
 
-```bash
-rg 'PLACEHOLDER' toolboards/mcu.cfg
-```
-
-The required mapping is:
-
-| MCU section | Physical board |
-| --- | --- |
-| `usb_bridge` | USB-CAN Bridge v2 |
-| `tool0` | T0 Toolhead v3 |
-| `tool1` | T1 Toolhead v3 |
-| `tool2` | T2 Toolhead v3 |
-| `tool3` | T3 Toolhead v3 |
+| MCU section | Toolboard ID | CAN UUID | Physical tool |
+| --- | --- | --- | --- |
+| `usb_bridge` | — | `28f4296c4844` | USB-CAN Bridge v2 |
+| `tool0` | 01 | `3fc4f7b9fe99` | T0 Toolhead v3 |
+| `tool1` | 02 | `a9c8770a4f5f` | T1 Toolhead v3 |
+| `tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 |
+| `tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 |
 
 Discover one unassigned toolboard at a time so its physical tool number cannot
 be confused with another board:
@@ -64,7 +59,7 @@ values are intentionally reset to zero until those converted tools are tuned.
 
 ## First configuration checks
 
-After installing the real UUIDs, restart Klipper with heaters cold and inspect
+After installing the toolboards, restart Klipper with heaters cold and inspect
 the log before commanding any outputs:
 
 ```bash

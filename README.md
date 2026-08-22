@@ -57,9 +57,9 @@ This configuration depends on following repositories:
 ## Configuration
 
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
-2. Replace the four toolboard placeholder CAN UUIDs in `toolboards/mcu.cfg`.
-   See the [CAN toolboard configuration](docs/can-toolboards.md) for board
-   mapping and first-start checks.
+2. Verify the installed toolboard CAN UUIDs in `toolboards/mcu.cfg`.
+   See the [CAN toolboard configuration](docs/can-toolboards.md) for the
+   Toolboard 01–04 mapping and first-start checks.
 3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
 4. Update other configurations to meet your needs.
    1. I'm using PT1000 for extruder, you might have to change that.
@@ -110,18 +110,17 @@ temperature sensors, and tool fans.
 
 ### CAN MCU names and UUIDs
 
-The USB-CAN bridge UUID is recorded below. The toolboards use valid-format
-placeholder UUIDs so the configuration can be parsed before they are connected;
-those placeholders do not identify real hardware. Replace all four toolboard
-values in `toolboards/mcu.cfg` before starting Klipper on the printer.
+The USB-CAN bridge and toolboard UUIDs are recorded below. The toolboards are
+installed in physical ID order: Toolboard 01 maps to T0, continuing through
+Toolboard 04 on T3.
 
-| Configuration section | CAN UUID | Physical board | Tool config |
-| --- | --- | --- | --- |
-| `mcu usb_bridge` | `28f4296c4844` | USB-CAN Bridge v2 | — |
-| `mcu tool0` | `000000000002` | T0 Toolhead v3 | `toolboards/tool0.cfg` |
-| `mcu tool1` | `000000000003` | T1 Toolhead v3 | `toolboards/tool1.cfg` |
-| `mcu tool2` | `000000000004` | T2 Toolhead v3 | `toolboards/tool2.cfg` |
-| `mcu tool3` | `000000000005` | T3 Toolhead v3 | `toolboards/tool3.cfg` |
+| Configuration section | Toolboard ID | CAN UUID | Physical board | Tool config |
+| --- | --- | --- | --- | --- |
+| `mcu usb_bridge` | — | `28f4296c4844` | USB-CAN Bridge v2 | — |
+| `mcu tool0` | 01 | `3fc4f7b9fe99` | T0 Toolhead v3 | `toolboards/tool0.cfg` |
+| `mcu tool1` | 02 | `a9c8770a4f5f` | T1 Toolhead v3 | `toolboards/tool1.cfg` |
+| `mcu tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | `toolboards/tool2.cfg` |
+| `mcu tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | `toolboards/tool3.cfg` |
 
 All five MCUs use `canbus_interface: can0`. Discover and record one unassigned
 toolboard at a time so its physical tool number cannot be confused with another
@@ -130,7 +129,7 @@ board. The host CAN interface must be configured for 1 Mbit/s.
 ### Per-tool Klipper names
 
 KTCC and the existing macros depend on these names. Do not rename them when
-installing the real UUIDs.
+verifying the installed UUIDs.
 
 | Tool | MCU prefix | Extruder/heater | Driver | Hotend fan | Part-fan object |
 | --- | --- | --- | --- | --- | --- |
