@@ -88,7 +88,7 @@ This configuration depends on following repositories:
 T0 ; change to tool 0
 T1 ; change to tool 1
 T2 ; change to tool 2
-T3 ; change to tool 3
+T3 ; temporarily disabled during toolboard conversion
 ```
 
 ### Drop tool
