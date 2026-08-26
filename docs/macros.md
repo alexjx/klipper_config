@@ -82,7 +82,6 @@
 | --- | --- | --- | --- | --- |
 | `PRINT_BEGIN` | — | 校验切片器参数，处理工具与热床温度、归零、adaptive mesh、heat soak、初始工具和 purge。 | — | `macros/startstop.cfg` |
 | `PRINT_END` | — | 卸下工具、关闭加热和 mesh、降低平台、释放电机、记录统计并延迟关闭风扇。 | — | `macros/startstop.cfg` |
-| `EXTRUDER_OFF` | — | 禁用所有当前存在的挤出机步进电机。 | — | `macros/startstop.cfg` |
 | `LOAD_FILAMENT` | — | 选择并加热工具，按每工具路径参数装料、purge，并可设置 PA/回抽。 | — | `macros/filament.cfg` |
 | `UNLOAD_FILAMENT` | — | 选择并加热工具，软化耗材头后按每工具路径参数退料。 | — | `macros/filament.cfg` |
 | `COLD_PULL` | — | 按指定工具执行加热、降温、摆动和拉出流程，并临时管理最低挤出温度。 | — | `macros/coldpull.cfg` |
