@@ -3,9 +3,9 @@
 The staged printer profile uses one USB-CAN bridge and currently enables the
 T2 Toolhead v3 board. The original Duet2 and DueX5 remain installed: T0 and T1
 still use them, while the old T2/T3 wiring has been removed. T3 is disconnected
-until the second migration phase. The Duet2 remains responsible for motion,
-the bed, the coupler, and tool detection. Hardware selection is centralized in
-`toolboards/toolheads.cfg`; only enabled CAN boards must be online.
+until the second migration phase. The Duet2/DueX5 pair remains responsible for
+motion, the bed, the coupler, and tool detection. Hardware selection is
+centralized in `toolboards/toolheads.cfg`; only enabled CAN boards must be online.
 
 ## Installed CAN UUIDs
 
@@ -22,13 +22,13 @@ physical ID order. T2 is active now; T3 is prepared but offline:
 
 ## Current and planned connections
 
-| Tool | Power/data | Motor | Heater | Sensor | Fans |
-| --- | --- | --- | --- | --- | --- |
-| T2 active | Toolboard 03 `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
-| T3 planned | Toolboard 04 `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
+| Tool | Connection board | Power/data | Motor | Heater | Sensor | Fans |
+| --- | --- | --- | --- | --- | --- | --- |
+| T2 active | Toolboard 03 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
+| T3 planned | Toolboard 04 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
 
-The former T2 connections (`E2 MOTOR/HEAT/TEMP`, DueX5 `FAN5/FAN6`) and T3
-connections (`E3 MOTOR/HEAT/TEMP`, DueX5 `FAN7/FAN8`) are disconnected and
+The former T2 DueX5 connections (`E2 MOTOR/HEAT/TEMP`, `FAN5/FAN6`) and T3
+DueX5 connections (`E3 MOTOR/HEAT/TEMP`, `FAN7/FAN8`) are disconnected and
 must remain unused.
 
 After T3 is physically connected and its UUID is confirmed, uncomment its
