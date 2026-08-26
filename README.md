@@ -9,7 +9,7 @@ This configuration depends on following repositories:
 
 - Thanks orignal [Klipper](https://github.com/Klipper3d/klipper)
 - Thanks orignal [KTCC](https://github.com/TypQxQ/Klipper_ToolChanger)
-- Thanks [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) for adaptive mesh and purging
+- Thanks [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) for the adaptive purge approach
 - Thanks [KIAUH](https://github.com/dw-0/kiauh) for gcode shell command ([Arksine](https://github.com/Arksine))
 
 ## Installation
@@ -64,8 +64,8 @@ This configuration depends on following repositories:
 4. Update other configurations to meet your needs.
    1. I'm using PT1000 for extruder, you might have to change that.
    2. This machine uses only the AC-bed configuration in `duet2/bed-ac.cfg`.
-5. ~~Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.~~
-   Enable file processing for exclude object for adaptive probing and purging.
+5. Enable object processing for Klipper's native adaptive mesh and the adaptive
+   purge macro. Both features use `[exclude_object]` geometry.
 
    - Edit `moonraker.conf` to include object processing
 
@@ -74,7 +74,25 @@ This configuration depends on following repositories:
      enable_object_processing: True
      ```
 
-   - Enable object lable in the slicer
+   - Enable object labels in the slicer
+
+### Native adaptive bed mesh
+
+`BED_MESH_CALIBRATE` retains the toolchanger safety checks, then delegates mesh
+bounds and probe-count calculation to upstream Klipper with `ADAPTIVE=1`.
+`settings/bed_mesh.cfg` adds a 3mm margin around the slicer's defined objects.
+If no object geometry is available, Klipper falls back to the configured full
+mesh.
+
+The two features have independent switches in `_SETTINGS`:
+
+```ini
+variable_adaptive_mesh: 1
+variable_adaptive_purge: 1
+```
+
+The purge implementation remains local because upstream adaptive bed mesh does
+not provide an adaptive purge command.
 
 6. ~~Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.~~
    Prefer https://github.com/Frix-x/klippain-shaketune
