@@ -219,6 +219,9 @@ Use the attended first-start procedure in
 
 ## Usage
 
+所有当前加载的自定义命令、内部辅助 macro 和原始命令覆盖关系见
+[`docs/macros.md`](docs/macros.md)。
+
 ### Filament macros during migration
 
 T0/T1 retain their long filament paths, while T2 and the prepared T3 profile
