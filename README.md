@@ -57,13 +57,13 @@ This configuration depends on following repositories:
 ## Configuration
 
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
-2. Verify the installed toolboard CAN UUIDs in `toolboards/mcu.cfg`.
+2. Verify each installed toolboard CAN UUID in its `toolboards/toolN.cfg` file.
    See the [CAN toolboard configuration](docs/can-toolboards.md) for the
    Toolboard 01–04 mapping and first-start checks.
 3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
 4. Update other configurations to meet your needs.
    1. I'm using PT1000 for extruder, you might have to change that.
-   2. The bed is AC powered, so include a different bed configuration in `printer_base.cfg` if needed.
+   2. This machine uses only the AC-bed configuration in `duet2/bed-ac.cfg`.
 5. ~~Follow guide from [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to setup `[exclude_object]` for KAMP.~~
    Enable file processing for exclude object for adaptive probing and purging.
 
@@ -87,32 +87,48 @@ This configuration depends on following repositories:
 The local connector and MCU-pin reference is
 [`toolboards/pins.md`](toolboards/pins.md).
 
-The active profile uses one USB-CAN bridge and four identical Toolhead v3 CAN
-boards. The Duet2 controls the printer axes, bed, tool coupler, and endstops;
-the DueX E5/E6 outputs drive the controller fan and case LED. Each toolboard
-controls one complete tool:
+The active migration profile keeps the original Duet2 and DueX5. T0 and T1
+still use their original Duet/DueX connections, T2 uses a Toolhead v3 CAN
+board, and T3 is physically disconnected. The old T2/T3 Duet/DueX wiring has
+been removed. The Duet2 continues to control the axes, bed, tool coupler, and
+endstops. A CAN toolboard controls one complete tool:
 
 - one Orbiter 2.0 extruder motor;
 - one 24 V hotend heater and one PT1000 temperature sensor;
 - one automatic 24 V hotend-cooling fan; and
 - two synchronized 24 V part-cooling fans.
 
-`printer_base.cfg` loads the complete CAN configuration through one include:
+`printer_base.cfg` loads the staged hardware selection through one include:
 
 ```ini
-[include toolboards/toolboards.cfg]
+[include toolboards/toolheads.cfg]
 ```
 
-That file loads `mcu.cfg` followed by `tool0.cfg` through `tool3.cfg`. The
-legacy Duet toolhead configuration files have been removed, so these four
-toolboard files are the only definitions for the extruders, hotend heaters,
-temperature sensors, and tool fans.
+`toolboards/toolheads.cfg` is the source of truth for enabled tool connections.
+T3 has no active include, so its offline MCU is not loaded. After physically
+connecting T3, enable `tool3.cfg` in `toolboards/toolheads.cfg`, then enable
+`tool3.cfg` at the end of `tools/tools.cfg`; the shared macros detect T3
+automatically. Keep `toolboards/mcu.cfg` enabled while any CAN tool is connected.
+
+### Current connection status
+
+| Tool | Current state | Motor/heater/sensor | Tool fans | Configuration |
+| --- | --- | --- | --- | --- |
+| T0 | Connected, legacy | Duet2 `E0 MOTOR`, `E0 HEAT`, `E0 TEMP` | Duet2 `FAN1`, `FAN2` | `duet2/tool0.cfg` |
+| T1 | Connected, legacy | Duet2 `E1 MOTOR`, `E1 HEAT`, `E1 TEMP` | DueX5 `FAN3`, `FAN4` | `duet2/tool1.cfg` |
+| T2 | Connected first, CAN | Toolboard 03 `J4`, `J5`, `J9` | Toolboard 03 `J6`, `J7`, `J8` | `toolboards/tool2.cfg` |
+| T3 | Disconnected | Old `E3` and DueX5 `FAN7`/`FAN8` wiring removed | Planned Toolboard 04 | configuration prepared but disabled |
+
+The former T2 Duet/DueX connections (`E2 MOTOR`, `E2 HEAT`, `E2 TEMP`,
+`FAN5`, and `FAN6`) are also unused. Keeping these outputs unconfigured avoids
+accidentally driving disconnected wiring.
 
 ### CAN MCU names and UUIDs
 
-The USB-CAN bridge and toolboard UUIDs are recorded below. The toolboards are
-installed in physical ID order: Toolboard 01 maps to T0, continuing through
-Toolboard 04 on T3.
+The USB-CAN bridge UUID is in `toolboards/mcu.cfg`; each toolboard UUID is kept
+beside that tool's pins in `toolboards/toolN.cfg`. Only enabled CAN boards need
+to be online. T2/Toolboard 03 is enabled now; T3/Toolboard 04 is recorded but
+remains disabled until connected.
 
 | Configuration section | Toolboard ID | CAN UUID | Physical board | Tool config |
 | --- | --- | --- | --- | --- |
@@ -122,9 +138,9 @@ Toolboard 04 on T3.
 | `mcu tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | `toolboards/tool2.cfg` |
 | `mcu tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | `toolboards/tool3.cfg` |
 
-All five MCUs use `canbus_interface: can0`. Discover and record one unassigned
-toolboard at a time so its physical tool number cannot be confused with another
-board. The host CAN interface must be configured for 1 Mbit/s.
+Enabled CAN MCUs use `canbus_interface: can0`. Discover and record one
+unassigned toolboard at a time so its physical tool number cannot be confused
+with another board. The host CAN interface must be configured for 1 Mbit/s.
 
 ### Per-tool Klipper names
 
@@ -133,10 +149,10 @@ verifying the installed UUIDs.
 
 | Tool | MCU prefix | Extruder/heater | Driver | Hotend fan | Part-fan object |
 | --- | --- | --- | --- | --- | --- |
-| T0 | `tool0:` | `extruder` | `tmc2209 extruder` | `hotend_fan_0` | `part_fan_0` |
-| T1 | `tool1:` | `extruder1` | `tmc2209 extruder1` | `hotend_fan_1` | `part_fan_1` |
+| T0 | Duet2 | `extruder` | `tmc2660 extruder` | `hotend_fan_0` | `part_fan_0` |
+| T1 | Duet2 | `extruder1` | `tmc2660 extruder1` | `hotend_fan_1` | `part_fan_1` |
 | T2 | `tool2:` | `extruder2` | `tmc2209 extruder2` | `hotend_fan_2` | `part_fan_2` |
-| T3 | `tool3:` | `extruder3` | `tmc2209 extruder3` | `hotend_fan_3` | `part_fan_3` |
+| T3 | planned `tool3:` | `extruder3` (disabled) | `tmc2209 extruder3` | `hotend_fan_3` | `part_fan_3` |
 
 ### Shared Toolhead v3 pin map
 
@@ -156,12 +172,12 @@ T2 uses `tool2:PA8` for its heater.
 | Part-cooling fan B | `PB0` | Combined into the same logical fan |
 
 The two physical part-cooling outputs are joined with a Klipper `multi_pin`.
-Commands sent to `part_fan_0` through `part_fan_3` therefore drive both fans on
-the selected tool at the same speed.
+For each CAN tool, commands sent to its `part_fan_N` object drive both
+toolboard part-fan outputs at the same speed.
 
 ### Shared Orbiter and hotend defaults
 
-All four tool configurations currently use the following starting values:
+Each CAN tool configuration uses the following starting values:
 
 | Setting | Value |
 | --- | --- |
@@ -185,10 +201,11 @@ Use the attended first-start procedure in
 
 ## Usage
 
-### Direct-drive filament macros
+### Filament macros during migration
 
-All four tools use the same Orbiter 2.0 direct-drive defaults. `TOOL` is a
-number from 0 through 3; when omitted, the currently mounted tool is used.
+T0/T1 retain their long filament paths, while T2 and the prepared T3 profile
+use direct-drive path lengths. Only TOOL 0-2 are currently available; TOOL 3
+is rejected until its CAN board and logical tool definition are enabled.
 
 ```gcode
 LOAD_FILAMENT TOOL=0 TEMP=220
@@ -196,17 +213,10 @@ UNLOAD_FILAMENT TOOL=0 TEMP=220
 COLD_PULL TOOL=0 INITIAL_TEMP=220
 ```
 
-`LOAD_FILAMENT` defaults to an 80 mm feed at a conservative 5 mm/s followed by
-a 50 mm slow purge. `UNLOAD_FILAMENT` defaults to a 200 mm withdrawal at
-20 mm/s; `COLD_PULL` uses 10 mm/s. Override these for a different spool path
-with `LENGTH`, `SPEED`, `PURGE_LENGTH`, or `PURGE_SPEED` as applicable. A
-single move is limited to 250 mm to match the extruder safety limit. The
-printer must be attended while establishing safe lengths for its final routing.
-
-T0 and T1 pressure advance were reset because changing their extruder hardware
-invalidates the previous values. Calibrate pressure advance and retraction for
-each tool before production printing; the existing T2 and T3 values are kept as
-starting points because those tools already used Orbiter direct drive.
+Defaults and safety limits are stored per tool in `_FILAMENT_SETTINGS`.
+Override them with `LENGTH`, `SPEED`, `PURGE_LENGTH`, or `PURGE_SPEED` as
+applicable. Calibrate pressure advance, retraction, and the filament path after
+each physical tool migration.
 
 ### Change tools
 
@@ -214,7 +224,7 @@ starting points because those tools already used Orbiter direct drive.
 T0 ; change to tool 0
 T1 ; change to tool 1
 T2 ; change to tool 2
-T3 ; change to tool 3
+T3 ; rejected until the T3 CAN toolboard is connected and enabled
 ```
 
 ### Drop tool
@@ -352,10 +362,10 @@ not directly to an MCU pin. A leading `!` means Klipper inverts that signal.
 
 | Function | Physical connector | MCU pin map | Klipper object / notes |
 | --- | --- | --- | --- |
-| CoreXY motor A | `X MOTOR` | step `PD6`, dir `!PD11`, CS `PD14` | `stepper_x`; left motor when viewed from the front |
+| CoreXY motor A | `E5 MOTOR` | step `PD3`, dir `!PD17`, CS `PD26` | `stepper_x`; original X driver is faulty |
 | CoreXY motor B | `Y MOTOR` | step `PD7`, dir `!PD12`, CS `PC9` | `stepper_y`; right motor when viewed from the front |
 | Z motor | `Z MOTOR` | step `PD8`, dir `!PD13`, CS `PC10` | `stepper_z`; fit the ZB jumpers if only ZA is used |
-| Tool coupler motor | `E0 MOTOR` | step `PD5`, dir `!PA1`, CS `PC17` | `manual_stepper stepper_c` |
+| Tool coupler motor | `E4 MOTOR` | step `PD0`, dir `!PD16`, CS `PD25` | `manual_stepper stepper_c` |
 | Shared motor enable | Internal | `!PC6` | Active-low enable for the four onboard TMC2660 drivers above |
 | X endstop | `X_STOP` | `PC14` | Physical X homing switch |
 | Y endstop | `Y_STOP` | `PA2` | Physical Y homing switch |
@@ -367,16 +377,16 @@ not directly to an MCU pin. A leading `!` means Klipper inverts that signal.
 | Controller fan | DueX `E5 HEAT` output | `!PC11` | `controller_fan drivers_fan` |
 | Case LED | DueX `E6 HEAT` output | `!PA15` | PWM `output_pin LED` |
 
-The replacement controller is selected by this USB identity:
+The original controller is selected by this USB identity:
 
 ```ini
 [mcu]
-serial: /dev/serial/by-id/usb-Klipper_sam4e8e_00313753364B37373032303531303233-if00
+serial: /dev/serial/by-id/usb-Klipper_sam4e8e_00323153434834523133303033303339-if00
 ```
 
 ### Per-tool CAN connection map
 
-The following row set applies independently to T0, T1, T2, and T3.
+The following row set applies to T2 now and to each tool migrated later.
 
 | Function | Toolhead v3 connector | Local pin map | Klipper behavior |
 | --- | --- | --- | --- |

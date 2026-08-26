@@ -1,7 +1,8 @@
 # Toolhead v3 pin mapping
 
-This document describes the active Toolhead v3 board used by T0-T3. It is the
-local reference for the pins in `tool0.cfg` through `tool3.cfg`. The mapping was
+This document describes the Toolhead v3 board used by migrated tools. T2 is
+active first; the same layout is prepared for the other tools. It is the local
+reference for the pins in `tool0.cfg` through `tool3.cfg`. The mapping was
 checked against the Toolhead v3 hardware design; archived v1/v2 boards are not
 compatible references.
 
