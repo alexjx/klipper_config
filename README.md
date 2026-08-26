@@ -60,7 +60,8 @@ This configuration depends on following repositories:
 2. Verify each installed toolboard CAN UUID in its `toolboards/toolN.cfg` file.
    See the [CAN toolboard configuration](docs/can-toolboards.md) for the
    Toolboard 01–04 mapping and first-start checks.
-3. Edit `~/klipper_config/printer_base.cfg`. Update the settings for your needs.
+3. Edit the global macro switches in `~/klipper_config/printer_base.cfg` as
+   needed. Host and main-MCU monitoring is kept in `settings/host_mcu.cfg`.
 4. Update other configurations to meet your needs.
    1. I'm using PT1000 for extruder, you might have to change that.
    2. This machine uses only the AC-bed configuration in `duet2/bed-ac.cfg`.
