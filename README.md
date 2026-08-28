@@ -106,10 +106,9 @@ not provide an adaptive purge command.
 The local connector and MCU-pin reference is
 [`toolboards/pins.md`](toolboards/pins.md).
 
-The active migration profile keeps the original Duet2 and DueX5. T0 and T1
-still use their original Duet/DueX connections, T2 uses a Toolhead v3 CAN
-board, and T3 is physically disconnected. The old T2/T3 Duet/DueX wiring has
-been removed. The Duet2/DueX5 pair continues to control motion, the AC bed,
+The active profile keeps the original Duet2 and DueX5. T0 and T1 use their
+original Duet/DueX connections; T2 and T3 are disabled. The old T2/T3
+Duet/DueX wiring has been removed. The Duet2/DueX5 pair continues to control motion, the AC bed,
 the tool coupler, and endstops. A CAN toolboard controls one complete tool:
 
 - one Orbiter 2.0 extruder motor;
@@ -124,10 +123,10 @@ the tool coupler, and endstops. A CAN toolboard controls one complete tool:
 ```
 
 `toolboards/toolheads.cfg` is the source of truth for enabled tool connections.
-T3 has no active include, so its offline MCU is not loaded. After physically
-connecting T3, enable `tool3.cfg` in `toolboards/toolheads.cfg`, then enable
-`tool3.cfg` at the end of `tools/tools.cfg`; the shared macros detect T3
-automatically. Keep `toolboards/mcu.cfg` enabled while any CAN tool is connected.
+T2 and T3 have no active includes, so their offline MCUs are not loaded. To
+re-enable either tool, enable `mcu.cfg` and its `toolN.cfg` hardware include in
+`toolboards/toolheads.cfg`, then enable the matching `toolN.cfg` at the end of
+`tools/tools.cfg`. Shared macros detect the enabled tools automatically.
 
 ### Current connection status
 
@@ -135,7 +134,7 @@ automatically. Keep `toolboards/mcu.cfg` enabled while any CAN tool is connected
 | --- | --- | --- | --- | --- | --- |
 | T0 | Connected, legacy | Duet2 | `E0 MOTOR`, `E0 HEAT`, `E0 TEMP` | `FAN1`, `FAN2` | `duet2/tool0.cfg` |
 | T1 | Connected, legacy | Duet2 + DueX5 | Duet2 `E1 MOTOR`, `E1 HEAT`, `E1 TEMP` | DueX5 `FAN3`, `FAN4` | `duet2/tool1.cfg` |
-| T2 | Connected first, CAN | Toolboard 03 | `J4`, `J5`, `J9` | `J6`, `J7`, `J8` | `toolboards/tool2.cfg` |
+| T2 | Disabled | Toolboard 03 recorded | `J4`, `J5`, `J9` when enabled | `J6`, `J7`, `J8` when enabled | configuration prepared but disabled |
 | T3 | Disconnected | DueX5 wiring removed; Toolboard 04 planned | Former `E3 MOTOR`, `E3 HEAT`, `E3 TEMP` disconnected | Former `FAN7`, `FAN8` disconnected | configuration prepared but disabled |
 
 The former T2 DueX5 connections (`E2 MOTOR`, `E2 HEAT`, `E2 TEMP`, `FAN5`,
@@ -146,8 +145,7 @@ accidentally driving disconnected wiring.
 
 The USB-CAN bridge UUID is in `toolboards/mcu.cfg`; each toolboard UUID is kept
 beside that tool's pins in `toolboards/toolN.cfg`. Only enabled CAN boards need
-to be online. T2/Toolboard 03 is enabled now; T3/Toolboard 04 is recorded but
-remains disabled until connected.
+to be online. T2/Toolboard 03 and T3/Toolboard 04 are recorded but disabled.
 
 | Configuration section | Toolboard ID | CAN UUID | Physical board | Tool config |
 | --- | --- | --- | --- | --- |
@@ -225,9 +223,9 @@ Use the attended first-start procedure in
 
 ### Filament macros during migration
 
-T0/T1 retain their long filament paths, while T2 and the prepared T3 profile
-use direct-drive path lengths. Only TOOL 0-2 are currently available; TOOL 3
-is rejected until its CAN board and logical tool definition are enabled.
+T0/T1 retain their long filament paths, while the prepared T2/T3 profiles use
+direct-drive path lengths. Only TOOL 0-1 are currently available; TOOL 2-3 are
+rejected until their CAN boards and logical tool definitions are enabled.
 
 ```gcode
 LOAD_FILAMENT TOOL=0 TEMP=220
@@ -245,7 +243,7 @@ each physical tool migration.
 ```gcode
 T0 ; change to tool 0
 T1 ; change to tool 1
-T2 ; change to tool 2
+T2 ; rejected until the T2 CAN toolboard is connected and enabled
 T3 ; rejected until the T3 CAN toolboard is connected and enabled
 ```
 
@@ -408,7 +406,7 @@ serial: /dev/serial/by-id/usb-Klipper_sam4e8e_00323153434834523133303033303339-i
 
 ### Per-tool CAN connection map
 
-The following row set applies to T2 now and to each tool migrated later.
+The following row set applies when a prepared CAN toolboard is enabled.
 
 | Function | Board | Physical connector | Local pin map | Klipper behavior |
 | --- | --- | --- | --- | --- |
