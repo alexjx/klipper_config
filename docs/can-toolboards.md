@@ -1,45 +1,44 @@
 # CAN toolboard configuration
 
-The printer profile has prepared USB-CAN and Toolhead v3 configuration, but T2
-and T3 are currently disabled. The original Duet2 and DueX5 remain installed:
+The printer profile enables its USB-CAN bridge and T2 Toolhead v3 board; T3 is
+currently disabled. The original Duet2 and DueX5 remain installed:
 T0 and T1 still use them, while the old T2/T3 wiring has been removed. The
-Duet2/DueX5 pair remains responsible for
-motion, the bed, the coupler, and tool detection. Hardware selection is
-centralized in `toolboards/toolheads.cfg`; only enabled CAN boards must be online.
+Duet2/DueX5 pair remains responsible for motion, the bed, the coupler, and tool
+detection. Hardware selection is centralized in `toolboards/toolheads.cfg`;
+only enabled CAN boards must be online.
 
 ## Installed CAN UUIDs
 
 The USB-CAN bridge UUID is `28f4296c4844`. The recorded board mapping follows
-physical ID order. T2 and T3 are prepared but disabled:
+physical ID order. T2 is active and T3 is prepared but disabled:
 
 | MCU section | Toolboard ID | CAN UUID | Physical tool | Current state |
 | --- | --- | --- | --- | --- |
-| `usb_bridge` | — | `28f4296c4844` | USB-CAN Bridge v2 | disabled while no CAN tools are enabled |
+| `usb_bridge` | — | `28f4296c4844` | USB-CAN Bridge v2 | enabled |
 | `tool0` | 01 | `3fc4f7b9fe99` | future T0 Toolhead v3 | not used |
 | `tool1` | 02 | `a9c8770a4f5f` | future T1 Toolhead v3 | not used |
-| `tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | disabled |
+| `tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | enabled |
 | `tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | disconnected/disabled |
 
 ## Current and planned connections
 
 | Tool | Connection board | Power/data | Motor | Heater | Sensor | Fans |
 | --- | --- | --- | --- | --- | --- | --- |
-| T2 prepared | Toolboard 03 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
+| T2 active | Toolboard 03 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
 | T3 planned | Toolboard 04 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
 
 The former T2 DueX5 connections (`E2 MOTOR/HEAT/TEMP`, `FAN5/FAN6`) and T3
 DueX5 connections (`E3 MOTOR/HEAT/TEMP`, `FAN7/FAN8`) are disconnected and
 must remain unused.
 
-After T2 or T3 is physically connected and its UUID is confirmed, enable the
-shared bridge and the matching hardware line in `toolboards/toolheads.cfg`:
+After T3 is physically connected and its UUID is confirmed, enable its matching
+hardware line in `toolboards/toolheads.cfg`:
 
 ```ini
-[include mcu.cfg]
-[include toolN.cfg]
+[include tool3.cfg]
 ```
 
-Then uncomment `[include toolN.cfg]` at the end of `tools/tools.cfg`. Keeping
+Then uncomment `[include tool3.cfg]` at the end of `tools/tools.cfg`. Keeping
 the logical include there ensures KTCC's shared tool modules load first.
 
 Discover one unassigned toolboard at a time so its physical tool number cannot

@@ -1,7 +1,7 @@
 # Toolhead v3 pin mapping
 
 This document describes the Toolhead v3 board prepared for migrated tools. T2
-and T3 are currently disabled. It is the local
+is active and T3 is currently disabled. It is the local
 reference for the pins in `tool0.cfg` through `tool3.cfg`. The mapping was
 checked against the Toolhead v3 hardware design; archived v1/v2 boards are not
 compatible references.

@@ -4,8 +4,8 @@ This is a hardware reference, not an active toolhead configuration. The board
 column distinguishes Duet2 onboard connectors from DueX5 expansion connectors.
 The active printer uses Duet2 for Y, Z, T0/T1, the AC bed, and endstops; it uses
 DueX5 E5 for X, E4 for the coupler, FAN3/FAN4 for T1, and E5/E6 heater outputs
-for the controller fan and case LED. T2 and T3 are disabled; their former
-DueX5 wiring is disconnected.
+for the controller fan and case LED. T2 uses its CAN toolboard and T3 is
+disabled; their former DueX5 wiring is disconnected.
 
 # Drivers
 
