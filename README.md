@@ -332,7 +332,14 @@ Where
 - `TOOL_TEMPS` is the tool temperature for each tool, it's a comma separated list.
 - `TOOL_STANDBY_TEMPS` is the tool standby temperature for each tool, it's a comma separated list.
 - `USED_TOOLS` is a list of boolean values, indicating if the tool is used in the print. Boolean value is either `true` or `false`.
-- `HEAT_SOAK` is the time to soak the chamber for high temperature print. It's activated only if bed temperature is above 110C.
+- `HEAT_SOAK` is the maximum chamber soak time in minutes. At the start of
+  `PRINT_BEGIN`, Klipper estimates room temperature from the configured hotends:
+  readings more than 5C from their median are ignored, then the remaining
+  readings are averaged. At least two readings must agree. Soaking runs only
+  when the bed target is above `_SETTINGS.heat_soak_threshold` and the estimated
+  room temperature is below the fixed 25C cutoff.
+  The actual time is scaled by `(bed target - estimated room temperature) / bed target`.
+  Set `HEAT_SOAK=0` to disable it.
 
 
 ### End gcode
