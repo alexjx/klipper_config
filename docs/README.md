@@ -2,6 +2,22 @@
 
 Use [ShakeTune](https://github.com/Frix-x/klippain-shaketune) for optimal results.
 
+The BTT ADXL345 uses USB and is disabled during normal printing. To measure
+resonance:
+
+1. Connect the accelerometer by USB and mount it securely on the toolhead.
+2. Uncomment `[include settings/resonance_tester.cfg]` in `printer_base.cfg`.
+3. Restart Klipper, then run
+   `ACCELEROMETER_QUERY CHIP=btt_adxl345`. A working sensor reports plausible
+   X/Y/Z values, including roughly one gravity of total acceleration.
+4. Run the required resonance test or `SHAPER_CALIBRATE`.
+5. Comment the include again and restart Klipper before disconnecting the USB
+   board.
+
+The board-specific USB serial path and SPI pins are stored in
+`settings/adxl345_usb.cfg`. If the board is reflashed or replaced, obtain its
+new path with `ls /dev/serial/by-id/` and update `serial` there.
+
 # Retraction Tuning Commands
 
 ```

@@ -101,6 +101,14 @@ not provide an adaptive purge command.
 7. Measure and update input shaper value for each tool.
 8. Update `~/klipper_config/tools/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
 
+### USB accelerometer
+
+The BTT ADXL345 is optional and disabled by default. Connect it by USB, then
+uncomment `[include settings/resonance_tester.cfg]` in `printer_base.cfg` and
+restart Klipper. Verify it with `ACCELEROMETER_QUERY CHIP=btt_adxl345` before
+measuring. Comment the include again before disconnecting the board. See
+[`docs/README.md`](docs/README.md) for the complete workflow.
+
 ## CAN Toolboard Configuration
 
 The local connector and MCU-pin reference is
