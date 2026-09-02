@@ -2,7 +2,7 @@
 
 This document describes the Toolhead v3 board prepared for migrated tools. T2
 is active and T3 is currently disabled. It is the local
-reference for the pins in `tool0.cfg` through `tool3.cfg`. The mapping was
+reference for the CAN profiles in this directory. The mapping was
 checked against the Toolhead v3 hardware design; archived v1/v2 boards are not
 compatible references.
 
@@ -75,7 +75,7 @@ different speeds with the current configuration.
 ## Communication, programming, and reserved pins
 
 These pins are part of the board design but are not configured as printer
-loads in `tool0.cfg` through `tool3.cfg`:
+loads in the CAN tool profiles under `tools/`:
 
 | Board connection/function | STM32 pin | Purpose |
 | --- | --- | --- |

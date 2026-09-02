@@ -57,7 +57,9 @@ This configuration depends on following repositories:
 ## Configuration
 
 1. Follow klipper document, edit `~/klipper_config/duet2/mcu.cfg`, ensure mcu serial device path is correct.
-2. Verify each installed toolboard CAN UUID in its `toolboards/toolN.cfg` file.
+2. Verify each installed toolboard CAN UUID in its `tools/toolN.cfg` file.
+   Optional T0/T1 CAN profiles are `tools/tool0_can.cfg` and
+   `tools/tool1_can.cfg`.
    See the [CAN toolboard configuration](docs/can-toolboards.md) for the
    Toolboard 01–04 mapping and first-start checks.
 3. Edit the global macro switches in `~/klipper_config/printer_base.cfg` as
@@ -98,8 +100,9 @@ not provide an adaptive purge command.
 6. ~~Update `scripts/generate-belt-tension-graph.sh`, `scripts/generate-shaper-graph-x.sh`, `scripts/generate-shaper-graph-y.sh` to meet your paths.~~
    Prefer https://github.com/Frix-x/klippain-shaketune
 
-7. Measure and update input shaper value for each tool.
-8. Update `~/klipper_config/tools/tools.cfg`. The offsets are used for initial tool alignment. Configure them to meet your needs.
+7. Measure and update the input-shaper values in each `tools/toolN.cfg` file.
+8. Update each tool's offset in its `tools/toolN.cfg` file. The offsets are used
+   for initial tool alignment.
 
 ### USB accelerometer
 
@@ -114,7 +117,7 @@ for the complete workflow.
 ## CAN Toolboard Configuration
 
 The local connector and MCU-pin reference is
-[`toolboards/pins.md`](toolboards/pins.md).
+[`tools/pins.md`](tools/pins.md).
 
 The active profile keeps the original Duet2 and DueX5. T0 and T1 use their
 original Duet/DueX connections, T2 uses its Toolhead v3 CAN board, and T3 is
@@ -127,26 +130,27 @@ A CAN toolboard controls one complete tool:
 - one automatic 24 V hotend-cooling fan; and
 - two synchronized 24 V part-cooling fans.
 
-`printer_base.cfg` loads the staged hardware selection through one include:
+`printer_base.cfg` loads all tool configuration through one include:
 
 ```ini
-[include toolboards/toolheads.cfg]
+[include tools/tools.cfg]
 ```
 
-`toolboards/toolheads.cfg` is the source of truth for enabled tool connections.
-T2 and the shared CAN bridge are active. T3 has no active include, so its
-offline MCU is not loaded. To enable T3, enable its `tool3.cfg` hardware include
-in `toolboards/toolheads.cfg`, then enable `tool3.cfg` at the end of
-`tools/tools.cfg`. Shared macros detect enabled tools automatically.
+`tools/tools.cfg` is the source of truth for enabled tools. Each `toolN.cfg`
+contains both its hardware configuration and logical tool settings, including
+its input shaper. T2 and the shared CAN bridge are active. T3 has no active
+include, so its offline MCU is not loaded. To enable T3, uncomment its single
+include at the end of `tools/tools.cfg`. Shared macros detect enabled tools
+automatically.
 
 ### Current connection status
 
 | Tool | Current state | Connection board | Motor/heater/sensor | Tool fans | Configuration |
 | --- | --- | --- | --- | --- | --- |
-| T0 | Connected, legacy | Duet2 | `E0 MOTOR`, `E0 HEAT`, `E0 TEMP` | `FAN1`, `FAN2` | `duet2/tool0.cfg` |
-| T1 | Connected, legacy | Duet2 + DueX5 | Duet2 `E1 MOTOR`, `E1 HEAT`, `E1 TEMP` | DueX5 `FAN3`, `FAN4` | `duet2/tool1.cfg` |
-| T2 | Connected, CAN | Toolboard 03 | `J4`, `J5`, `J9` | `J6`, `J7`, `J8` | `toolboards/tool2.cfg` |
-| T3 | Disconnected | DueX5 wiring removed; Toolboard 04 planned | Former `E3 MOTOR`, `E3 HEAT`, `E3 TEMP` disconnected | Former `FAN7`, `FAN8` disconnected | configuration prepared but disabled |
+| T0 | Connected, legacy | Duet2 | `E0 MOTOR`, `E0 HEAT`, `E0 TEMP` | `FAN1`, `FAN2` | `tools/tool0.cfg` |
+| T1 | Connected, legacy | Duet2 + DueX5 | Duet2 `E1 MOTOR`, `E1 HEAT`, `E1 TEMP` | DueX5 `FAN3`, `FAN4` | `tools/tool1.cfg` |
+| T2 | Connected, CAN | Toolboard 03 | `J4`, `J5`, `J9` | `J6`, `J7`, `J8` | `tools/tool2.cfg` |
+| T3 | Disconnected | DueX5 wiring removed; Toolboard 04 planned | Former `E3 MOTOR`, `E3 HEAT`, `E3 TEMP` disconnected | Former `FAN7`, `FAN8` disconnected | `tools/tool3.cfg` prepared but disabled |
 
 The former T2 DueX5 connections (`E2 MOTOR`, `E2 HEAT`, `E2 TEMP`, `FAN5`,
 and `FAN6`) are also unused. Keeping these outputs unconfigured avoids
@@ -154,17 +158,19 @@ accidentally driving disconnected wiring.
 
 ### CAN MCU names and UUIDs
 
-The USB-CAN bridge UUID is in `toolboards/mcu.cfg`; each toolboard UUID is kept
-beside that tool's pins in `toolboards/toolN.cfg`. Only enabled CAN boards need
-to be online. T2/Toolboard 03 is enabled; T3/Toolboard 04 remains disabled.
+The USB-CAN bridge UUID is in `tools/mcu.cfg`; each active toolboard UUID is
+kept beside that tool's other settings in `tools/toolN.cfg`. Only enabled CAN
+boards need to be online. T2/Toolboard 03 is enabled; T3/Toolboard 04 remains
+disabled. The future T0/T1 CAN profiles remain in `tools/tool0_can.cfg` and
+`tools/tool1_can.cfg`.
 
 | Configuration section | Toolboard ID | CAN UUID | Physical board | Tool config |
 | --- | --- | --- | --- | --- |
 | `mcu usb_bridge` | — | `28f4296c4844` | USB-CAN Bridge v2 | — |
-| `mcu tool0` | 01 | `3fc4f7b9fe99` | T0 Toolhead v3 | `toolboards/tool0.cfg` |
-| `mcu tool1` | 02 | `a9c8770a4f5f` | T1 Toolhead v3 | `toolboards/tool1.cfg` |
-| `mcu tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | `toolboards/tool2.cfg` |
-| `mcu tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | `toolboards/tool3.cfg` |
+| `mcu tool0` | 01 | `3fc4f7b9fe99` | T0 Toolhead v3 | `tools/tool0_can.cfg` |
+| `mcu tool1` | 02 | `a9c8770a4f5f` | T1 Toolhead v3 | `tools/tool1_can.cfg` |
+| `mcu tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | `tools/tool2.cfg` |
+| `mcu tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | `tools/tool3.cfg` |
 
 Enabled CAN MCUs use `canbus_interface: can0`. Discover and record one
 unassigned toolboard at a time so its physical tool number cannot be confused
@@ -437,7 +443,7 @@ The following row set applies when a prepared CAN toolboard is enabled.
 | PT1000 sensor | Toolhead v3 | `J9` | `PA0` | Two-wire input with a configured 2.2 kOhm pull-up |
 
 See [`duet2/pins.md`](duet2/pins.md) and
-[`toolboards/pins.md`](toolboards/pins.md) for the full hardware references.
+[`tools/pins.md`](tools/pins.md) for the full hardware references.
 
 
 ## Notes:

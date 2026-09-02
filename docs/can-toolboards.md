@@ -4,8 +4,9 @@ The printer profile enables its USB-CAN bridge and T2 Toolhead v3 board; T3 is
 currently disabled. The original Duet2 and DueX5 remain installed:
 T0 and T1 still use them, while the old T2/T3 wiring has been removed. The
 Duet2/DueX5 pair remains responsible for motion, the bed, the coupler, and tool
-detection. Hardware selection is centralized in `toolboards/toolheads.cfg`;
-only enabled CAN boards must be online.
+detection. Tool selection is centralized in `tools/tools.cfg`; each enabled
+`tools/toolN.cfg` contains both hardware and logical settings. Only enabled CAN
+boards must be online.
 
 ## Installed CAN UUIDs
 
@@ -31,15 +32,16 @@ The former T2 DueX5 connections (`E2 MOTOR/HEAT/TEMP`, `FAN5/FAN6`) and T3
 DueX5 connections (`E3 MOTOR/HEAT/TEMP`, `FAN7/FAN8`) are disconnected and
 must remain unused.
 
-After T3 is physically connected and its UUID is confirmed, enable its matching
-hardware line in `toolboards/toolheads.cfg`:
+After T3 is physically connected and its UUID is confirmed, enable its single
+line at the end of `tools/tools.cfg`:
 
 ```ini
 [include tool3.cfg]
 ```
 
-Then uncomment `[include tool3.cfg]` at the end of `tools/tools.cfg`. Keeping
-the logical include there ensures KTCC's shared tool modules load first.
+That file contains both the T3 hardware and logical settings, so no second
+include is required. Its position ensures KTCC's shared tool modules load
+first.
 
 Discover one unassigned toolboard at a time so its physical tool number cannot
 be confused with another board:
