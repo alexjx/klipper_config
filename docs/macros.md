@@ -48,10 +48,13 @@
 | `COUPLER_UNLOCK` | — | 必要时先复位，然后将耦合器移动到解锁位置。 | KTCC（`tool_unlock_gcode`） | `tools/coupler.cfg` |
 | `SET_TOOL_RETRACTION` | — | 为指定工具设置并交给 KTCC 管理回抽参数。 | — | `tools/macros.cfg` |
 | `SET_TOOL_PRESSURE_ADVANCE` | — | 为指定工具设置 pressure advance，并要求 KTCC 保存该工具参数。 | — | `tools/macros.cfg` |
-| `MANUAL_Z_ALIGN` | — | 拾取指定工具并进入手动 Z offset 调整流程。 | — | `tools/alignment.cfg` |
-| `MANUAL_Z_ALIGN_SAVE` | — | 记录手动 Z 对齐的初始位置。 | — | `tools/alignment.cfg` |
-| `MANUAL_Z_ALIGN_CALC` | — | 根据当前位置与初始位置计算并保存新的工具 Z offset。 | — | `tools/alignment.cfg` |
-| `MANUAL_Z_ALIGN_CANCEL` | — | 取消手动 Z 对齐、清除临时状态并按需卸下工具。 | — | `tools/alignment.cfg` |
+| `MANUAL_Z_ALIGN` | `TOOL`, `TARGET`, `SAFE_Z` | 兼容入口：在未装工具的状态归位并升至安全高度，再拾取指定工具并进入粗调阶段。 | 向导客户端 | `tools/alignment.cfg` |
+| `MANUAL_Z_ALIGN_PREPARE` | `TOOL`, `TARGET`, `SAFE_Z` | `MANUAL_Z_ALIGN` 的显式名称；默认安全高度为 20 mm。 | 向导客户端 | `tools/alignment.cfg` |
+| `MANUAL_Z_ALIGN_BEGIN` | — | 确认粗调位置并进入限制为起点 ±2 mm 的精调阶段。 | 向导客户端 | `tools/alignment.cfg` |
+| `MANUAL_Z_ALIGN_SAVE` | — | `MANUAL_Z_ALIGN_BEGIN` 的兼容别名。 | 向导客户端 | `tools/alignment.cfg` |
+| `MANUAL_Z_ALIGN_CALC` | — | 使用目标高度与当前位置计算新 Z offset；先卸下工具，再保存 offset。 | 向导客户端 | `tools/alignment.cfg` |
+| `MANUAL_Z_ALIGN_CANCEL` | — | 取消流程、不计算 offset，并卸下当前对齐工具。 | 向导客户端 | `tools/alignment.cfg` |
+| `_MANUAL_Z_ALIGN_JOG` | `DELTA` | 向导客户端使用的受限 Z 点动；粗调支持 0.10/0.50/1.00 mm，精调支持 0.01/0.05/0.10 mm。 | 向导客户端 | `tools/alignment.cfg` |
 | `ALIGN_TOOLS` | — | 调用 KTCC，在探针点自动测量并对齐所选工具。 | — | `tools/alignment.cfg` |
 | `SET_ALL_TOOL_TEMPERATURE` | — | 将所有当前已启用工具设置为指定的对齐准备温度。 | — | `tools/alignment.cfg` |
 

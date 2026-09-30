@@ -291,6 +291,28 @@ Where
 
 - `TOOLS` is a list of tools to be aligned. It's a comma separated list. Default is all tools.
 
+### Manual nozzle Z alignment
+
+The staged macro workflow supports tools with different nozzle lengths. It first
+homes with no tool mounted and raises Z to a safe height (20 mm by default), then
+picks the selected tool and moves only in XY to the bed center. The operator can
+approach the bed with coarse steps before switching to fine adjustment.
+
+Start the workflow with:
+
+```gcode
+MANUAL_Z_ALIGN TOOL=1
+```
+
+Use a guided client to approach the bed, select the fine-adjustment stage, and
+then save or cancel. Saving and cancelling both drop the tool. Saving
+persists the calculated tool Z offset only after the drop succeeds; cancelling
+does not change the offset.
+
+The workflow refuses to start while printing, while the tool changer is busy,
+or while any tool is already mounted. `SAFE_Z` may be set from 5 to 50 mm when a
+different preparation clearance is required.
+
 ### Manual bed calibration
 
 The original `MANUAL_BED_CALIBRATE` command remains available. If a tool is
