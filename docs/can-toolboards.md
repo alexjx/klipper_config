@@ -1,7 +1,7 @@
 # CAN toolboard configuration
 
-The printer profile enables its USB-CAN bridge and T2 Toolhead v3 board; T3 is
-currently disabled. The original Duet2 and DueX5 remain installed:
+The printer profile enables its USB-CAN bridge and T2/T3 Toolhead v3 boards.
+The original Duet2 and DueX5 remain installed:
 T0 and T1 still use them, while the old T2/T3 wiring has been removed. The
 Duet2/DueX5 pair remains responsible for motion, the bed, the coupler, and tool
 detection. Tool selection is centralized in `tools/tools.cfg`; each enabled
@@ -11,7 +11,7 @@ boards must be online.
 ## Installed CAN UUIDs
 
 The USB-CAN bridge UUID is `28f4296c4844`. The recorded board mapping follows
-physical ID order. T2 is active and T3 is prepared but disabled:
+physical ID order. T2 and T3 are active:
 
 | MCU section | Toolboard ID | CAN UUID | Physical tool | Current state |
 | --- | --- | --- | --- | --- |
@@ -19,21 +19,20 @@ physical ID order. T2 is active and T3 is prepared but disabled:
 | `tool0` | 01 | `3fc4f7b9fe99` | future T0 Toolhead v3 | not used |
 | `tool1` | 02 | `a9c8770a4f5f` | future T1 Toolhead v3 | not used |
 | `tool2` | 03 | `89622ad13c37` | T2 Toolhead v3 | enabled |
-| `tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | disconnected/disabled |
+| `tool3` | 04 | `fb7d25bf3989` | T3 Toolhead v3 | enabled |
 
 ## Current and planned connections
 
 | Tool | Connection board | Power/data | Motor | Heater | Sensor | Fans |
 | --- | --- | --- | --- | --- | --- | --- |
 | T2 active | Toolboard 03 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
-| T3 planned | Toolboard 04 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | PT1000 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
+| T3 active | Toolboard 04 | `J2`: 24 V, GND, CANH, CANL | `J4` | `J5` | 104NT-4 on `J9` | hotend `J6`; paired part fans `J7`/`J8` |
 
 The former T2 DueX5 connections (`E2 MOTOR/HEAT/TEMP`, `FAN5/FAN6`) and T3
 DueX5 connections (`E3 MOTOR/HEAT/TEMP`, `FAN7/FAN8`) are disconnected and
 must remain unused.
 
-After T3 is physically connected and its UUID is confirmed, enable its single
-line at the end of `tools/tools.cfg`:
+T3 is enabled by its single line at the end of `tools/tools.cfg`:
 
 ```ini
 [include tool3.cfg]
@@ -63,7 +62,7 @@ Every migrated tool uses the same Toolhead v3 pin map:
 | Extruder step / direction / enable | `PD0` / `PD1` / `PD2` |
 | TMC2209 UART | `PA15` |
 | Heater | `PA8` |
-| PT1000 input | `PA0`, 2.2 kOhm pull-up |
+| Temperature sensor input | `PA0`, 2.2 kOhm pull-up |
 | Hotend fan | `PA6` |
 | Paired part-cooling fans | `PA7` and `PB0` |
 
@@ -93,7 +92,7 @@ ip -details -statistics link show can0
 
 For each newly connected CAN tool in turn:
 
-1. Confirm its PT1000 reading is close to room temperature.
+1. Confirm its temperature reading is close to room temperature.
 2. Run `DUMP_TMC STEPPER=extruderN` and confirm UART communication, using
    `extruder2` for T2 and `extruder3` for T3.
 3. With heaters off and no filament loaded, use a short forced move to check
@@ -128,3 +127,21 @@ For each newly connected CAN tool in turn:
 The PID values retained in the branch are startup values from the previous
 configuration. They are not a substitute for calibration after changing the
 heater output and temperature-input electronics.
+
+T3 uses Klipper's built-in `ATC Semitec 104NT-4-R025H42G` definition, assuming
+the installed 104NT-4 has the H42G suffix. Its maximum temperature is 300°C,
+matching the [SEMITEC NT specification](https://www.semitec-global.com/uploads/2022/01/P18-NT-Thermistor.pdf).
+The board's physical 2.2 kOhm pull-up remains unchanged. After verifying room
+temperature and an attended low-temperature heating check, calibrate T3 at
+your intended printing temperature, for example:
+
+```gcode
+PID_CALIBRATE HEATER=extruder3 TARGET=200
+```
+
+When calibration finishes, copy the reported `pid_Kp`, `pid_Ki`, and `pid_Kd`
+values into `tools/tool3.cfg`, keeping `control: pid`. Save the file, then run
+`RESTART`. Do not use `SAVE_CONFIG` for this workflow: the existing PID settings
+are in an included file and conflict with Klipper's automatic save mechanism.
+After restarting, verify temperature stability at the calibration target,
+then turn the heater off.

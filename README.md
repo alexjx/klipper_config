@@ -65,7 +65,7 @@ This configuration depends on following repositories:
 3. Edit the global macro switches in `~/klipper_config/printer_base.cfg` as
    needed. Host and main-MCU monitoring is kept in `settings/host_mcu.cfg`.
 4. Update other configurations to meet your needs.
-   1. I'm using PT1000 for extruder, you might have to change that.
+   1. T0–T2 use PT1000; T3 uses ATC Semitec 104NT-4-R025H42G.
    2. This machine uses only the AC-bed configuration in `duet2/bed-ac.cfg`.
 5. Enable object processing for Klipper's native adaptive mesh and the adaptive
    purge macro. Both features use `[exclude_object]` geometry.
@@ -120,13 +120,13 @@ The local connector and MCU-pin reference is
 [`tools/pins.md`](tools/pins.md).
 
 The active profile keeps the original Duet2 and DueX5. T0 and T1 use their
-original Duet/DueX connections, T2 uses its Toolhead v3 CAN board, and T3 is
-disabled. The old T2/T3 Duet/DueX wiring has been removed. The Duet2/DueX5
+original Duet/DueX connections, while T2 and T3 use their Toolhead v3 CAN
+boards. The old T2/T3 Duet/DueX wiring has been removed. The Duet2/DueX5
 pair continues to control motion, the AC bed, the tool coupler, and endstops.
 A CAN toolboard controls one complete tool:
 
 - one Orbiter 2.0 extruder motor;
-- one 24 V hotend heater and one PT1000 temperature sensor;
+- one 24 V hotend heater and one temperature sensor (PT1000 on T2, 104NT-4 on T3);
 - one automatic 24 V hotend-cooling fan; and
 - two synchronized 24 V part-cooling fans.
 
@@ -138,10 +138,8 @@ A CAN toolboard controls one complete tool:
 
 `tools/tools.cfg` is the source of truth for enabled tools. Each `toolN.cfg`
 contains both its hardware configuration and logical tool settings, including
-its input shaper. T2 and the shared CAN bridge are active. T3 has no active
-include, so its offline MCU is not loaded. To enable T3, uncomment its single
-include at the end of `tools/tools.cfg`. Shared macros detect enabled tools
-automatically.
+its input shaper. T2, T3, and the shared CAN bridge are active. Shared macros
+detect enabled tools automatically.
 
 ### Current connection status
 
@@ -150,7 +148,7 @@ automatically.
 | T0 | Connected, legacy | Duet2 | `E0 MOTOR`, `E0 HEAT`, `E0 TEMP` | `FAN1`, `FAN2` | `tools/tool0.cfg` |
 | T1 | Connected, legacy | Duet2 + DueX5 | Duet2 `E1 MOTOR`, `E1 HEAT`, `E1 TEMP` | DueX5 `FAN3`, `FAN4` | `tools/tool1.cfg` |
 | T2 | Connected, CAN | Toolboard 03 | `J4`, `J5`, `J9` | `J6`, `J7`, `J8` | `tools/tool2.cfg` |
-| T3 | Disconnected | DueX5 wiring removed; Toolboard 04 planned | Former `E3 MOTOR`, `E3 HEAT`, `E3 TEMP` disconnected | Former `FAN7`, `FAN8` disconnected | `tools/tool3.cfg` prepared but disabled |
+| T3 | Connected, CAN | Toolboard 04 | `J4`, `J5`, `J9` (104NT-4) | `J6`, `J7`, `J8` | `tools/tool3.cfg` |
 
 The former T2 DueX5 connections (`E2 MOTOR`, `E2 HEAT`, `E2 TEMP`, `FAN5`,
 and `FAN6`) are also unused. Keeping these outputs unconfigured avoids
@@ -160,8 +158,8 @@ accidentally driving disconnected wiring.
 
 The USB-CAN bridge UUID is in `tools/mcu.cfg`; each active toolboard UUID is
 kept beside that tool's other settings in `tools/toolN.cfg`. Only enabled CAN
-boards need to be online. T2/Toolboard 03 is enabled; T3/Toolboard 04 remains
-disabled. The future T0/T1 CAN profiles remain in `tools/tool0_can.cfg` and
+boards need to be online. T2/Toolboard 03 and T3/Toolboard 04 are enabled.
+The future T0/T1 CAN profiles remain in `tools/tool0_can.cfg` and
 `tools/tool1_can.cfg`.
 
 | Configuration section | Toolboard ID | CAN UUID | Physical board | Tool config |
@@ -186,7 +184,7 @@ verifying the installed UUIDs.
 | T0 | Duet2 | `extruder` | `tmc2660 extruder` | `hotend_fan_0` | `part_fan_0` |
 | T1 | Duet2 | `extruder1` | `tmc2660 extruder1` | `hotend_fan_1` | `part_fan_1` |
 | T2 | `tool2:` | `extruder2` | `tmc2209 extruder2` | `hotend_fan_2` | `part_fan_2` |
-| T3 | planned `tool3:` | `extruder3` (disabled) | `tmc2209 extruder3` | `hotend_fan_3` | `part_fan_3` |
+| T3 | `tool3:` | `extruder3` | `tmc2209 extruder3` | `hotend_fan_3` | `part_fan_3` |
 
 ### Shared Toolhead v3 pin map
 
@@ -200,7 +198,7 @@ T2 uses `tool2:PA8` for its heater.
 | Extruder enable | `!PD2` | Enable signal is active-low |
 | TMC2209 UART | `PA15` | Driver communication and diagnostics |
 | Hotend heater | `PA8` | PWM heater output, `max_power: 1.0` |
-| PT1000 sensor | `PA0` | Uses `pullup_resistor: 2200` |
+| Temperature sensor | `PA0` | Uses `pullup_resistor: 2200` |
 | Hotend fan | `PA6` | Automatic at 40°C, full speed |
 | Part-cooling fan A | `PA7` | Combined into one logical fan |
 | Part-cooling fan B | `PB0` | Combined into the same logical fan |
@@ -224,8 +222,8 @@ Each CAN tool configuration uses the following starting values:
 | Maximum single extrusion-only move | `250 mm` |
 | Maximum extrusion-only velocity | `100 mm/s` |
 | Minimum extrusion temperature | `170°C` |
-| Temperature range | `-10°C` to `320°C` |
-| Temperature sensor | `PT1000`, 2.2 kOhm pull-up |
+| Temperature range | `-10°C` to `320°C`; T3 maximum `300°C` |
+| Temperature sensor | T2: `PT1000`; T3: `ATC Semitec 104NT-4-R025H42G`; both use a 2.2 kOhm pull-up |
 
 The checked-in PID values are only starting values copied from the previous
 heater configuration. PID, rotation distance, motor direction, pressure
@@ -240,9 +238,8 @@ Use the attended first-start procedure in
 
 ### Filament macros during migration
 
-T0/T1 retain their long filament paths, while the T2 and prepared T3 profiles
-use direct-drive path lengths. TOOL 0-2 are currently available; TOOL 3 is
-rejected until its CAN board and logical tool definition are enabled.
+T0/T1 retain their long filament paths, while the T2 and T3 profiles
+use direct-drive path lengths. TOOL 0-3 are currently available.
 
 ```gcode
 LOAD_FILAMENT TOOL=0 TEMP=220
@@ -261,7 +258,7 @@ each physical tool migration.
 T0 ; change to tool 0
 T1 ; change to tool 1
 T2 ; change to tool 2
-T3 ; rejected until the T3 CAN toolboard is connected and enabled
+T3 ; select the T3 CAN tool
 ```
 
 ### Drop tool
@@ -462,7 +459,7 @@ The following row set applies when a prepared CAN toolboard is enabled.
 | Hotend-cooling fan | Toolhead v3 | `J6` / Fan 0 | `PA6` | Starts automatically at 40°C or while heating |
 | Part-cooling fan 1 | Toolhead v3 | `J7` / Fan 1 | `PA7` | First member of the per-tool synchronized fan pair |
 | Part-cooling fan 2 | Toolhead v3 | `J8` / Fan 2 | `PB0` | Second member of the per-tool synchronized fan pair |
-| PT1000 sensor | Toolhead v3 | `J9` | `PA0` | Two-wire input with a configured 2.2 kOhm pull-up |
+| Temperature sensor | Toolhead v3 | `J9` | `PA0` | Two-wire input with a configured 2.2 kOhm pull-up |
 
 See [`duet2/pins.md`](duet2/pins.md) and
 [`tools/pins.md`](tools/pins.md) for the full hardware references.

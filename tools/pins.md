@@ -1,7 +1,7 @@
 # Toolhead v3 pin mapping
 
 This document describes the Toolhead v3 board prepared for migrated tools. T2
-is active and T3 is currently disabled. It is the local
+and T3 are active. It is the local
 reference for the CAN profiles in this directory. The mapping was
 checked against the Toolhead v3 hardware design; archived v1/v2 boards are not
 compatible references.
@@ -37,7 +37,7 @@ pin on the Duet2 or another toolboard.
 | J6 fan pads / Fan 0 | Fan MOSFET | `PA6` | `heater_fan hotend_fan_N` | Automatic 24 V hotend-cooling fan |
 | J7 fan pads / Fan 1 | Fan MOSFET | `PA7` | first `multi_pin` member | First 24 V part-cooling fan |
 | J8 fan pads / Fan 2 | Fan MOSFET | `PB0` | second `multi_pin` member | Second 24 V part-cooling fan |
-| J9 sensor pads | Analog input | `PA0 / ADC_IN0` | `sensor_pin` | Reads the two-wire PT1000 hotend sensor |
+| J9 sensor pads | Analog input | `PA0 / ADC_IN0` | `sensor_pin` | Reads the two-wire hotend sensor |
 
 J5-J8 are low-side switched 24 V outputs: the board supplies 24 V to the load
 and switches its return through a MOSFET. Follow the PCB silkscreen and v3
@@ -52,8 +52,9 @@ sensor_pin: toolN:PA0
 pullup_resistor: 2200
 ```
 
-Replace `toolN` with the correct MCU name. A PT1000 has no polarity, but its
-wires must go only to the J9 sensor pads.
+Replace `toolN` with the correct MCU name. T2 uses PT1000 as shown; T3 uses
+`sensor_type: ATC Semitec 104NT-4-R025H42G` with the same 2200-ohm pull-up.
+Both sensors have no polarity; their wires must go only to the J9 sensor pads.
 
 ## Fan behavior
 
@@ -97,7 +98,7 @@ physically at an end of the CAN bus.
 - Keep `enable_pin` inverted. Removing `!` changes the driver's enable logic.
 - If an Orbiter turns backward, change only that tool's `dir_pin` between
   `toolN:PD1` and `!toolN:PD1` after an attended direction test.
-- Confirm the PT1000 reports a sensible room temperature before enabling J5.
+- Confirm the temperature sensor reports a sensible room temperature before enabling J5.
 - Confirm J6 with the automatic hotend-fan test, then confirm J7 and J8 both
   track a low `part_fan_N` duty cycle before normal operation.
 - Do not reuse SWD, crystal, CAN, or explicit no-connect pins for accessories.

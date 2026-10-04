@@ -2,7 +2,7 @@
 
 本文以 `printer_base.cfg` 的当前 include 图为准，记录本仓库实际加载的
 `[gcode_macro]`。不包含外部 `mainsail.cfg`、KTCC 插件内部命令、
-`[delayed_gcode]` 回调以及未加载的 T3 工具定义。
+`[delayed_gcode]` 回调。
 
 “原始命令”列只在 macro 使用 `rename_existing` 覆盖已有命令时填写。
 该名称是在自定义 macro 内调用原始实现的别名。以下划线开头的命令是内部
@@ -37,7 +37,7 @@
 | `T0` | — | 通过 KTCC 选择 T0。 | — | `tools/macros.cfg` |
 | `T1` | — | 通过 KTCC 选择 T1。 | — | `tools/macros.cfg` |
 | `T2` | — | 通过 KTCC 选择 T2。 | — | `tools/macros.cfg` |
-| `T3` | — | T3 已启用时通过 KTCC 选择；当前未连接时给出明确错误。 | — | `tools/macros.cfg` |
+| `T3` | — | 通过 KTCC 选择已启用的 T3；若禁用其配置则给出明确错误。 | — | `tools/macros.cfg` |
 | `DROP_TOOL` | — | 通过 KTCC 卸下当前工具。 | — | `tools/macros.cfg` |
 | `TX` | — | `DROP_TOOL` 的简短别名，用于卸下当前工具。 | — | `tools/macros.cfg` |
 | `UNLOCK_TOOL` | — | 直接请求 KTCC 解锁工具。 | — | `tools/macros.cfg` |
